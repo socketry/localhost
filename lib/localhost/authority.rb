@@ -31,10 +31,9 @@ module Localhost
 			authority = self.new(*args)
 			path = self.path
 			
-			if File.exist? path
-				authority.load(path)
-			else
-				Dir.mkdir(path, 0600)
+			unless authority.load(path)
+				Dir.mkdir(path, 0700) unless File.directory?(path)
+				
 				authority.save(path)
 			end
 			
@@ -46,7 +45,7 @@ module Localhost
 			
 			@key = nil
 			@name = nil
-			@certiicate = nil
+			@certificate = nil
 		end
 		
 		def key
@@ -86,14 +85,15 @@ module Localhost
 		end
 		
 		def load(path)
-			key_path = File.join(path, "#{@hostname}.key")
-			if File.exist?(key_path)
+			if File.directory? path
+				key_path = File.join(path, "#{@hostname}.key")
+				return false unless File.exist?(key_path)
 				@key = OpenSSL::PKey::RSA.new(File.read(key_path))
-			end
-			
-			certificate_path = File.join(path, "#{@hostname}.crt")
-			if File.exist?(certificate_path)
+				
+				certificate_path = File.join(path, "#{@hostname}.crt")
 				@certificate = OpenSSL::X509::Certificate.new(File.read(certificate_path))
+				
+				return true
 			end
 		end
 		
