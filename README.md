@@ -39,6 +39,12 @@ OpenSSL::SSL::SSLContext.new.tap do |context|
 end
 ```
 
+If you use Safari to access such a server, it will allow you to add the certificate to your keychain without much work. Once you've done this, you won't need to do it again for any other site when running such a development environment from the same user account.
+
+### Files
+
+The certificate and private key are stored in `~/.localhost/`.
+
 ## Contributing
 
 1. Fork it
