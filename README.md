@@ -2,6 +2,12 @@
 
 This gem provides a convenient API for generating per-user self-signed root certificates.
 
+## Motivation
+
+HTTP/2 requires SSL in web browsers. If you want to use HTTP/2 for development (and you should), you need to start using URLs like `https://localhost:8080`. In most cases, this requires adding a self-signed certificate to your certificate store (e.g. Keychain on macOS), and storing the private key for the web-server to use.
+
+I wanted to provide a server-agnostic way of doing this, primarily because I think it makes sense to minimise the amount of junky self-signed keys you add to your certificate store for `localhost`.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -40,6 +46,10 @@ end
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## See Also
+
+- [falcon](https://github.com/socketry/falcon) — Uses this `Localhost::Authority` to provide HTTP/2 with minimal configuration for `localhost`.
 
 ## License
 
