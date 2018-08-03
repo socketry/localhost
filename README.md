@@ -1,4 +1,4 @@
-# Localhost
+# Localhost [![Build Status](https://travis-ci.com/socketry/localhost.svg)](https://travis-ci.com/socketry/localhost)
 
 This gem provides a convenient API for generating per-user self-signed root certificates.
 
