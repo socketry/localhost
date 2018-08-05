@@ -30,13 +30,33 @@ This example shows how to generate a certificate for an SSL secured web server:
 
 ```ruby
 require 'localhost/authority'
+require 'socket'
 
 authority = Localhost::Authority.fetch
 
-OpenSSL::SSL::SSLContext.new.tap do |context|
-	context.cert = authority.certificate
-	context.key = authority.key
+server_thread = Thread.new do
+	server = OpenSSL::SSL::SSLServer.new(TCPServer.new("localhost", 4050), authority.server_context)
+	
+	server.listen
+	
+	peer = server.accept
+	
+	puts "Writing..."
+	peer.flush
+	
+	peer.close
 end
+
+client = OpenSSL::SSL::SSLSocket.new(TCPSocket.new("localhost", 4050), authority.client_context)
+
+# Initialize SSL connection
+client.connect
+
+puts client.read
+
+client.close
+
+server_thread.join
 ```
 
 If you use Safari to access such a server, it will allow you to add the certificate to your keychain without much work. Once you've done this, you won't need to do it again for any other site when running such a development environment from the same user account.

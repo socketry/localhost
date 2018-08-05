@@ -12,4 +12,8 @@ RSpec.configure do |config|
 	config.expect_with :rspec do |c|
 		c.syntax = :expect
 	end
+	
+	config.before(:all) do
+		FileUtils.rm_rf("ssl")
+	end
 end

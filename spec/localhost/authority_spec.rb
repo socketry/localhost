@@ -21,6 +21,10 @@
 require 'fileutils'
 require 'localhost/authority'
 
+require 'async/rspec'
+require 'async/io/host_endpoint'
+require 'async/io/ssl_endpoint'
+
 RSpec.describe Localhost::Authority do
 	it "can generate key and certificate" do
 		FileUtils.mkdir_p("ssl")
@@ -30,11 +34,39 @@ RSpec.describe Localhost::Authority do
 		expect(File).to be_exist("ssl/localhost.key")
 	end
 	
-	describe '#ssl_context' do
-		subject {described_class.fetch}
-		
+	describe '#store' do
+		it "can verify certificate" do
+			expect(subject.store.verify(subject.certificate)).to be true
+		end
+	end
+	
+	describe '#server_context' do
 		it "can generate appropriate ssl context" do
-			expect(subject.ssl_context).to be_a OpenSSL::SSL::SSLContext
+			expect(subject.server_context).to be_a OpenSSL::SSL::SSLContext
+		end
+	end
+	
+	context 'client/server' do
+		include_context Async::RSpec::Reactor
+		
+		let(:endpoint) {Async::IO::Endpoint.tcp("localhost", 4040)}
+		let(:server_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.server_context)}
+		let(:client_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.client_context)}
+		
+		let(:client) {client_endpoint.connect}
+		
+		it "can verify peer" do
+			server_task = reactor.async do
+				server_endpoint.accept do |peer|
+					peer.write("Hello World!")
+					peer.close
+				end
+			end
+			
+			expect(client.read(12)).to be == "Hello World!"
+			
+			client.close
+			server_task.stop
 		end
 	end
 end

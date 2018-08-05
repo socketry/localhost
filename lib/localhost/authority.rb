@@ -46,6 +46,7 @@ module Localhost
 			@key = nil
 			@name = nil
 			@certificate = nil
+			@store = nil
 		end
 		
 		def key
@@ -73,6 +74,12 @@ module Localhost
 				extension_factory.subject_certificate = certificate
 				extension_factory.issuer_certificate = certificate
 				
+				# Because we are using a self-signed root certificate, we also need to make it a "pseudo-CA".
+				# https://security.stackexchange.com/questions/143061/does-openssl-refuse-self-signed-certificates-without-basic-constraints
+				certificate.add_extension extension_factory.create_extension("basicConstraints", "CA:TRUE", true)
+				certificate.add_extension extension_factory.create_extension("keyUsage", "keyCertSign, cRLSign, digitalSignature", true)
+				certificate.add_extension extension_factory.create_extension("subjectKeyIdentifier", "hash")
+				
 				certificate.sign self.key, OpenSSL::Digest::SHA256.new
 			end
 		end
@@ -84,15 +91,27 @@ module Localhost
 			end
 		end
 		
-		def ssl_context(*args)
+		def server_context(*args)
 			OpenSSL::SSL::SSLContext.new(*args).tap do |context|
 				context.key = self.key
 				context.cert = self.certificate
-				context.cert_store = self.store
 				
 				context.session_id_context = "localhost"
 				
-				context.set_params
+				context.set_params(
+					verify_hostname: false,
+				)
+			end
+		end
+		
+		def client_context(*args)
+			OpenSSL::SSL::SSLContext.new(*args).tap do |context|
+				context.cert_store = self.store
+				
+				context.set_params(
+					verify_mode: OpenSSL::SSL::VERIFY_PEER,
+					verify_hostname: false,
+				)
 			end
 		end
 		
