@@ -84,6 +84,18 @@ module Localhost
 			end
 		end
 		
+		def ssl_context(*args)
+			OpenSSL::SSL::SSLContext.new(*args).tap do |context|
+				context.key = self.key
+				context.cert = self.certificate
+				context.cert_store = self.store
+				
+				context.session_id_context = "localhost"
+				
+				context.set_params
+			end
+		end
+		
 		def load(path)
 			if File.directory? path
 				key_path = File.join(path, "#{@hostname}.key")

@@ -29,4 +29,12 @@ RSpec.describe Localhost::Authority do
 		expect(File).to be_exist("ssl/localhost.crt")
 		expect(File).to be_exist("ssl/localhost.key")
 	end
+	
+	describe '#ssl_context' do
+		subject {described_class.fetch}
+		
+		it "can generate appropriate ssl context" do
+			expect(subject.ssl_context).to be_a OpenSSL::SSL::SSLContext
+		end
+	end
 end
