@@ -98,9 +98,11 @@ module Localhost
 				
 				context.session_id_context = "localhost"
 				
-				context.set_params(
-					#verify_hostname: false,
-				)
+				context.set_params
+				
+				if context.respond_to? :verify_hostname=
+					context.verify_hostname = false
+				end
 			end
 		end
 		
@@ -110,8 +112,11 @@ module Localhost
 				
 				context.set_params(
 					verify_mode: OpenSSL::SSL::VERIFY_PEER,
-					#verify_hostname: false,
 				)
+				
+				if context.respond_to? :verify_hostname=
+					context.verify_hostname = false
+				end
 			end
 		end
 		
