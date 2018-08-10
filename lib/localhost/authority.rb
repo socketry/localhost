@@ -134,7 +134,6 @@ module Localhost
 				key = OpenSSL::PKey::RSA.new(File.read(key_path))
 				
 				# Certificates with old version need to be regenerated.
-				puts "Certificate version: #{certificate.version}"
 				return false if certificate.version < 2
 				
 				@certificate = certificate
