@@ -50,11 +50,19 @@ module Localhost
 		end
 		
 		def key
-			@key ||= OpenSSL::PKey::RSA.new(1024)
+			@key ||= OpenSSL::PKey::RSA.new(1024*2)
+		end
+		
+		def key= key
+			@key = key
 		end
 		
 		def name
 			@name ||= OpenSSL::X509::Name.parse("O=Development/CN=#{@hostname}")
+		end
+		
+		def name= name
+			@name = name
 		end
 		
 		def certificate
@@ -66,6 +74,7 @@ module Localhost
 				certificate.public_key = self.key.public_key
 				
 				certificate.serial = 1
+				certificate.version = 2
 				
 				certificate.not_before = Time.now
 				certificate.not_after = Time.now + (3600 * 24 * 365 * 10)
@@ -74,11 +83,13 @@ module Localhost
 				extension_factory.subject_certificate = certificate
 				extension_factory.issuer_certificate = certificate
 				
-				# Because we are using a self-signed root certificate, we also need to make it a "pseudo-CA".
-				# https://security.stackexchange.com/questions/143061/does-openssl-refuse-self-signed-certificates-without-basic-constraints
-				certificate.add_extension extension_factory.create_extension("basicConstraints", "CA:TRUE", true)
-				certificate.add_extension extension_factory.create_extension("keyUsage", "keyCertSign, cRLSign, digitalSignature", true)
-				certificate.add_extension extension_factory.create_extension("subjectKeyIdentifier", "hash")
+				certificate.extensions = [
+					extension_factory.create_extension("basicConstraints", "CA:FALSE", true),
+					extension_factory.create_extension("subjectKeyIdentifier", "hash"),
+				]
+				
+				certificate.add_extension extension_factory.create_extension("authorityKeyIdentifier", "keyid:always,issuer:always")
+				certificate.add_extension extension_factory.create_extension("subjectAltName", "DNS: #{@hostname}")
 				
 				certificate.sign self.key, OpenSSL::Digest::SHA256.new
 			end
@@ -99,10 +110,6 @@ module Localhost
 				context.session_id_context = "localhost"
 				
 				context.set_params
-				
-				if context.respond_to? :verify_hostname=
-					context.verify_hostname = false
-				end
 			end
 		end
 		
@@ -113,21 +120,25 @@ module Localhost
 				context.set_params(
 					verify_mode: OpenSSL::SSL::VERIFY_PEER,
 				)
-				
-				if context.respond_to? :verify_hostname=
-					context.verify_hostname = false
-				end
 			end
 		end
 		
 		def load(path)
-			if File.directory? path
-				key_path = File.join(path, "#{@hostname}.key")
-				return false unless File.exist?(key_path)
-				@key = OpenSSL::PKey::RSA.new(File.read(key_path))
-				
+			if File.directory? path	
 				certificate_path = File.join(path, "#{@hostname}.crt")
-				@certificate = OpenSSL::X509::Certificate.new(File.read(certificate_path))
+				key_path = File.join(path, "#{@hostname}.key")
+				
+				return false unless File.exist?(certificate_path) and File.exist?(key_path)
+				
+				certificate = OpenSSL::X509::Certificate.new(File.read(certificate_path))
+				key = OpenSSL::PKey::RSA.new(File.read(key_path))
+				
+				# Certificates with old version need to be regenerated.
+				puts "Certificate version: #{certificate.version}"
+				return false if certificate.version < 2
+				
+				@certificate = certificate
+				@key = key
 				
 				return true
 			end

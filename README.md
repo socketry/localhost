@@ -61,9 +61,27 @@ server_thread.join
 
 If you use Safari to access such a server, it will allow you to add the certificate to your keychain without much work. Once you've done this, you won't need to do it again for any other site when running such a development environment from the same user account.
 
+### Safari
+
+If you use this with a web server, when you open the site in Safari:
+
+![Safari](media/safari.png)
+
+- Click "View the certificate" to check that it is the correct certificate.
+- Click "visit this website" which will prompt you to add the certificate to your keychain. Once you've done this, it should work for a long time.
+
+### Chrome
+
+If you use this with a web server, when you open the site in Safari:
+
+![Chrome](media/chrome.png)
+
+- Click "ADVANCED" to see additional details, including...
+- Click "Proceed to localhost (unsafe)" which will allow you to use the site for the current browser session.
+
 ### Files
 
-The certificate and private key are stored in `~/.localhost/`.
+The certificate and private key are stored in `~/.localhost/`. You can delete them and they will be regenerated. If you added the certificate to your keychain, you'll probably want to delete that too.
 
 ## Contributing
 
