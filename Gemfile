@@ -8,4 +8,6 @@ gemspec
 group :development do
 	gem 'async-io'
 	gem 'async-rspec'
+	
+	gem 'async-process'
 end

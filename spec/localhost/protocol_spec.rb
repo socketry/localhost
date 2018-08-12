@@ -25,48 +25,46 @@ require 'async/io/ssl_endpoint'
 
 require 'async/process'
 
+RSpec.shared_examples_for "valid protocol" do |protocol|
+	it "can connect using #{protocol}" do
+		status = Async::Process.spawn("openssl", "s_client", "-connect", "localhost:4040", "-#{protocol}")
+		
+		expect(status).to be_success
+		
+		server_task.stop
+	end
+end
+
+RSpec.shared_examples_for "invalid protocol" do |protocol|
+	it "can connect using #{protocol}" do
+		status = Async::Process.spawn("openssl", "s_client", "-connect", "localhost:4040", "-#{protocol}")
+		
+		expect(status).to_not be_success
+		
+		server_task.stop
+	end
+end
+
 RSpec.describe Localhost::Authority do
-	it "can generate key and certificate" do
-		FileUtils.mkdir_p("ssl")
-		subject.save("ssl")
-		
-		expect(File).to be_exist("ssl/localhost.crt")
-		expect(File).to be_exist("ssl/localhost.key")
-	end
+	include_context Async::RSpec::Reactor
 	
-	describe '#store' do
-		it "can verify certificate" do
-			expect(subject.store.verify(subject.certificate)).to be true
-		end
-	end
+	let(:endpoint) {Async::IO::Endpoint.tcp("localhost", 4040)}
+	let(:server_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.server_context)}
+	let(:client_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.client_context)}
 	
-	describe '#server_context' do
-		it "can generate appropriate ssl context" do
-			expect(subject.server_context).to be_a OpenSSL::SSL::SSLContext
-		end
-	end
+	let(:client) {client_endpoint.connect}
 	
-	context 'client/server' do
-		include_context Async::RSpec::Reactor
-		
-		let(:endpoint) {Async::IO::Endpoint.tcp("localhost", 4040)}
-		let(:server_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.server_context)}
-		let(:client_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.client_context)}
-		
-		let(:client) {client_endpoint.connect}
-		
-		it "can verify peer" do
-			server_task = reactor.async do
-				server_endpoint.accept do |peer|
-					peer.write("Hello World!")
-					peer.close
-				end
+	let!(:server_task) do
+		reactor.async do
+			server_endpoint.accept do |peer|
+				peer.write("Hello World!")
+				peer.close
 			end
-			
-			expect(client.read(12)).to be == "Hello World!"
-			
-			client.close
-			server_task.stop
 		end
 	end
+	
+	it_behaves_like "invalid protocol", "ssl3"
+	it_behaves_like "valid protocol", "tls1"
+	it_behaves_like "valid protocol", "tls1_1"
+	it_behaves_like "valid protocol", "tls1_2"
 end
