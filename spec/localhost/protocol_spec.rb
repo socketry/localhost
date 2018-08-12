@@ -25,9 +25,17 @@ require 'async/io/ssl_endpoint'
 
 require 'async/process'
 
-RSpec.shared_examples_for "valid protocol" do |protocol|
+RSpec.shared_examples_for "valid protocol" do |protocol, openssl_options, curl_options|
 	it "can connect using #{protocol}" do
-		status = Async::Process.spawn("openssl", "s_client", "-connect", "localhost:4040", "-#{protocol}")
+		status = Async::Process.spawn("openssl", "s_client", "-connect", "localhost:4040", *openssl_options)
+		
+		expect(status).to be_success
+		
+		server_task.stop
+	end
+	
+	it "can connect using HTTP over #{protocol}" do
+		status = Async::Process.spawn("curl", "--verbose", "--insecure", "https://localhost:4040", *curl_options)
 		
 		expect(status).to be_success
 		
@@ -35,9 +43,17 @@ RSpec.shared_examples_for "valid protocol" do |protocol|
 	end
 end
 
-RSpec.shared_examples_for "invalid protocol" do |protocol|
-	it "can connect using #{protocol}" do
-		status = Async::Process.spawn("openssl", "s_client", "-connect", "localhost:4040", "-#{protocol}")
+RSpec.shared_examples_for "invalid protocol" do |protocol, openssl_options, curl_options|
+	it "can't connect using #{protocol}" do
+		status = Async::Process.spawn("openssl", "s_client", "-connect", "localhost:4040", *openssl_options)
+		
+		expect(status).to_not be_success
+		
+		server_task.stop
+	end
+	
+	it "can't connect using HTTP over #{protocol}" do
+		status = Async::Process.spawn("curl", "--verbose", "--insecure", "https://localhost:4040", *curl_options)
 		
 		expect(status).to_not be_success
 		
@@ -57,14 +73,17 @@ RSpec.describe Localhost::Authority do
 	let!(:server_task) do
 		reactor.async do
 			server_endpoint.accept do |peer|
-				peer.write("Hello World!")
+				peer.write("HTTP/1.1 200 Okay\r\n")
+				peer.write("Connection: close\r\nContent-Length: 0\r\n\r\n")
 				peer.close
 			end
 		end
 	end
 	
-	it_behaves_like "invalid protocol", "ssl3"
-	it_behaves_like "valid protocol", "tls1"
-	it_behaves_like "valid protocol", "tls1_1"
-	it_behaves_like "valid protocol", "tls1_2"
+	it_behaves_like "invalid protocol", "SSLv3", ["-ssl3"], ["--sslv3"]
+	it_behaves_like "valid protocol", "TLSv1", ["-tls1"], ["--tlsv1"]
+	it_behaves_like "valid protocol", "TLSv1.1", ["-tls1_1"], ["--tlsv1.1"]
+	it_behaves_like "valid protocol", "TLSv1.2", ["-tls1_2"], ["--tlsv1.2"]
+	
+	it_behaves_like "valid protocol", "default", [], []
 end
