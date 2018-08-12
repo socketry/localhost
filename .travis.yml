@@ -1,14 +1,10 @@
 language: ruby
-sudo: required
 dist: xenial
 cache: bundler
 
-before_script:
-  - gem update --system
-  - gem install bundler
-
 matrix:
   include:
+    - rvm: 2.3.6
     - rvm: 2.3
     - rvm: 2.4
     - rvm: 2.5
