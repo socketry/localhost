@@ -102,6 +102,8 @@ module Localhost
 			end
 		end
 		
+		SERVER_CIPHERS = "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5".freeze
+		
 		def server_context(*args)
 			OpenSSL::SSL::SSLContext.new(*args).tap do |context|
 				context.key = self.key
@@ -109,7 +111,9 @@ module Localhost
 				
 				context.session_id_context = "localhost"
 				
-				context.set_params
+				context.set_params(
+					ciphers: SERVER_CIPHERS
+				)
 			end
 		end
 		
