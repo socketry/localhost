@@ -125,7 +125,9 @@ module Localhost
 					context.tmp_dh_callback = proc {self.dh_key}
 				end
 				
-				if context.respond_to? :tmp_ecdh_callback=
+				if context.respond_to? :ecdh_curves=
+					context.ecdh_curves = 'P-256:P-384:P-224:P-521'
+				elsif context.respond_to? :tmp_ecdh_callback=
 					context.tmp_ecdh_callback = proc {self.ecdh_key}
 				end
 				
