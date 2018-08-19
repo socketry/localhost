@@ -49,8 +49,18 @@ module Localhost
 			@store = nil
 		end
 		
+		BITS = 1024*2
+		
+		def ecdh_key
+			@ecdh_key ||= OpenSSL::PKey::EC.new "prime256v1"
+		end
+		
+		def dh_key
+			@dh_key ||= OpenSSL::PKey::DH.new(BITS)
+		end
+		
 		def key
-			@key ||= OpenSSL::PKey::RSA.new(1024*2)
+			@key ||= OpenSSL::PKey::RSA.new(BITS)
 		end
 		
 		def key= key
@@ -111,6 +121,14 @@ module Localhost
 				
 				context.session_id_context = "localhost"
 				
+				if context.respond_to? :tmp_dh_callback=
+					context.tmp_dh_callback = proc {self.dh_key}
+				end
+				
+				if context.respond_to? :tmp_ecdh_callback=
+					context.tmp_ecdh_callback = proc {self.ecdh_key}
+				end
+				
 				context.set_params(
 					ciphers: SERVER_CIPHERS
 				)
@@ -128,7 +146,7 @@ module Localhost
 		end
 		
 		def load(path)
-			if File.directory? path	
+			if File.directory? path
 				certificate_path = File.join(path, "#{@hostname}.crt")
 				key_path = File.join(path, "#{@hostname}.key")
 				
