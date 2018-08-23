@@ -75,6 +75,7 @@ RSpec.describe Localhost::Authority do
 			server_endpoint.accept do |peer|
 				peer.write("HTTP/1.1 200 Okay\r\n")
 				peer.write("Connection: close\r\nContent-Length: 0\r\n\r\n")
+				peer.flush
 				peer.close
 			end
 		end
