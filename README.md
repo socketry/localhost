@@ -29,15 +29,17 @@ Or install it yourself as:
 This example shows how to generate a certificate for an SSL secured server:
 
 ```ruby
-#!/usr/bin/env ruby
-
-require 'localhost/authority'
 require 'socket'
 require 'thread'
 
+require 'localhost/authority'
+
+# Get the self-signed authority for localhost:
 authority = Localhost::Authority.fetch
+
 ready = Thread::Queue.new
 
+# Start a server thread:
 server_thread = Thread.new do
 	server = OpenSSL::SSL::SSLServer.new(TCPServer.new("localhost", 4050), authority.server_context)
 	
@@ -57,9 +59,10 @@ ready.pop
 
 client = OpenSSL::SSL::SSLSocket.new(TCPSocket.new("localhost", 4050), authority.client_context)
 
-# Initialize SSL connection
+# Initialize SSL connection:
 client.connect
 
+# Read the encrypted message:
 puts client.read(12)
 
 client.close
