@@ -7,28 +7,37 @@ require 'async/http/server'
 require 'async/http/client'
 require 'localhost/authority'
 
+# The (self-signed) authority to use:
 hostname = "localhost"
 authority = Localhost::Authority.fetch(hostname)
 
+# The server app:
 app = lambda do |request|
 	Async::HTTP::Response[200, {}, ["Hello World!"]]
 end
 
+# Bind to the specified host:
 endpoint = Async::IO::Endpoint.tcp(hostname, "8080")
 
+# Prepare the server, endpoint will be used for `bind`:
 server_endpoint = Async::IO::SSLEndpoint.new(endpoint, ssl_context: authority.server_context)
 server = Async::HTTP::Server.new(app, server_endpoint, Async::HTTP::Protocol::HTTP1)
 
+# Prepare the client, endpoint will be used for `connect`:
 client_endpoint = Async::IO::SSLEndpoint.new(endpoint, ssl_context: authority.client_context)
 client = Async::HTTP::Client.new(client_endpoint, Async::HTTP::Protocol::HTTP1)
 
+# Run the reactor:
 Async::Reactor.run do |task|
+	# Start the server task:
 	server_task = task.async do
 		server.run
 	end
 	
+	# Connect to the server:
 	response = client.get("/")
 	puts "Status: #{response.status}\n#{response.read}"
 	
+	# Stop the server:
 	server_task.stop
 end
