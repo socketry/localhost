@@ -26,40 +26,49 @@ Or install it yourself as:
 
 ## Usage
 
-This example shows how to generate a certificate for an SSL secured web server:
+This example shows how to generate a certificate for an SSL secured server:
 
 ```ruby
+#!/usr/bin/env ruby
+
 require 'localhost/authority'
 require 'socket'
+require 'thread'
 
 authority = Localhost::Authority.fetch
+ready = Thread::Queue.new
 
 server_thread = Thread.new do
 	server = OpenSSL::SSL::SSLServer.new(TCPServer.new("localhost", 4050), authority.server_context)
 	
 	server.listen
 	
+	ready << true
+	
 	peer = server.accept
 	
-	puts "Writing..."
+	peer.puts "Hello World!"
 	peer.flush
 	
 	peer.close
 end
+
+ready.pop
 
 client = OpenSSL::SSL::SSLSocket.new(TCPSocket.new("localhost", 4050), authority.client_context)
 
 # Initialize SSL connection
 client.connect
 
-puts client.read
+puts client.read(12)
 
 client.close
-
 server_thread.join
 ```
 
 If you use Safari to access such a server, it will allow you to add the certificate to your keychain without much work. Once you've done this, you won't need to do it again for any other site when running such a development environment from the same user account.
+
+For an example of how to make your own HTTPS web server, see [examples/https.rb](examples/https.rb).
 
 ### Safari
 
