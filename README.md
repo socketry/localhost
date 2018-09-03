@@ -84,7 +84,7 @@ If you use this with a web server, when you open the site in Safari:
 
 ### Chrome
 
-If you use this with a web server, when you open the site in Safari:
+If you use this with a web server, when you open the site in Chrome:
 
 ![Chrome](media/chrome.png)
 
