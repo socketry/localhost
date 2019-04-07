@@ -132,7 +132,8 @@ module Localhost
 				end
 				
 				context.set_params(
-					ciphers: SERVER_CIPHERS
+					ciphers: SERVER_CIPHERS,
+					verify_mode: OpenSSL::SSL::VERIFY_NONE,
 				)
 			end
 		end
