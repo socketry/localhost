@@ -1,6 +1,9 @@
-# Localhost [![Build Status](https://travis-ci.com/socketry/localhost.svg)](https://travis-ci.com/socketry/localhost)
+# Localhost
 
 This gem provides a convenient API for generating per-user self-signed root certificates.
+
+[![Build Status](https://travis-ci.com/socketry/localhost.svg)](https://travis-ci.com/socketry/localhost)
+[![Coverage Status](https://coveralls.io/repos/socketry/localhost/badge.svg)](https://coveralls.io/r/socketry/localhost)
 
 ## Motivation
 
