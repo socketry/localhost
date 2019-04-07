@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'localhost'
+
 RSpec.describe Localhost do
 	it "has a version number" do
 		expect(Localhost::VERSION).not_to be nil

@@ -4,16 +4,19 @@ cache: bundler
 
 matrix:
   include:
-    - rvm: 2.3.6
     - rvm: 2.3
     - rvm: 2.4
     - rvm: 2.5
     - rvm: 2.6
+    - rvm: 2.6
+      os: osx
+    - rvm: 2.6
+      env: COVERAGE=BriefSummary,Coveralls
+    - rvm: truffleruby
     - rvm: jruby-head
       env: JRUBY_OPTS="--debug -X+O"
     - rvm: ruby-head
-    - rvm: rbx-3
   allow_failures:
+    - rvm: truffleruby
     - rvm: ruby-head
     - rvm: jruby-head
-    - rvm: rbx-3

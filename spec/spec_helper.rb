@@ -1,6 +1,5 @@
 
-require "bundler/setup"
-require "localhost"
+require 'covered/rspec'
 
 require 'async/rspec'
 
