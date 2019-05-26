@@ -96,7 +96,7 @@ If you use this with a web server, when you open the site in Chrome:
 
 #### Self-Signed Localhost
 
-The best way to use Chrome wiht self-signed localhost certificates is to allow it in your chrome settings: [chrome://flags/#allow-insecure-localhost](chrome://flags/#allow-insecure-localhost).
+The best way to use Chrome with self-signed localhost certificates is to allow it in your chrome settings: [chrome://flags/#allow-insecure-localhost](chrome://flags/#allow-insecure-localhost).
 
 ### Files
 
