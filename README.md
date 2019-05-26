@@ -94,6 +94,10 @@ If you use this with a web server, when you open the site in Chrome:
 - Click "ADVANCED" to see additional details, including...
 - Click "Proceed to localhost (unsafe)" which will allow you to use the site for the current browser session.
 
+#### Self-Signed Localhost
+
+The best way to use Chrome wiht self-signed localhost certificates is to allow it in your chrome settings: [chrome://flags/#allow-insecure-localhost](chrome://flags/#allow-insecure-localhost).
+
 ### Files
 
 The certificate and private key are stored in `~/.localhost/`. You can delete them and they will be regenerated. If you added the certificate to your keychain, you'll probably want to delete that too.
