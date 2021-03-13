@@ -68,7 +68,7 @@ module Localhost
 		end
 		
 		def name
-			@name ||= OpenSSL::X509::Name.parse("O=Development/CN=#{@hostname}")
+			@name ||= OpenSSL::X509::Name.parse("/O=Development/CN=#{@hostname}")
 		end
 		
 		def name= name
