@@ -2,8 +2,7 @@
 
 This gem provides a convenient API for generating per-user self-signed root certificates.
 
-[![Build Status](https://travis-ci.com/socketry/localhost.svg)](https://travis-ci.com/socketry/localhost)
-[![Coverage Status](https://coveralls.io/repos/socketry/localhost/badge.svg)](https://coveralls.io/r/socketry/localhost)
+[![Development Status](https://github.com/socketry/localhost/workflows/Development/badge.svg)](https://github.com/socketry/localhost/actions?workflow=Development)
 
 ## Motivation
 
@@ -15,23 +14,23 @@ I wanted to provide a server-agnostic way of doing this, primarily because I thi
 
 Add this line to your application's Gemfile:
 
-```ruby
+``` ruby
 gem 'localhost'
 ```
 
 And then execute:
 
-	$ bundle
+    $ bundle
 
 Or install it yourself as:
 
-	$ gem install localhost
+    $ gem install localhost
 
 ## Usage
 
 This example shows how to generate a certificate for an SSL secured server:
 
-```ruby
+``` ruby
 require 'socket'
 require 'thread'
 
@@ -82,8 +81,8 @@ If you use this with a web server, when you open the site in Safari:
 
 ![Safari](media/safari.png)
 
-- Click "View the certificate" to check that it is the correct certificate.
-- Click "visit this website" which will prompt you to add the certificate to your keychain. Once you've done this, it should work for a long time.
+  - Click "View the certificate" to check that it is the correct certificate.
+  - Click "visit this website" which will prompt you to add the certificate to your keychain. Once you've done this, it should work for a long time.
 
 ### Chrome
 
@@ -91,12 +90,12 @@ If you use this with a web server, when you open the site in Chrome:
 
 ![Chrome](media/chrome.png)
 
-- Click "ADVANCED" to see additional details, including...
-- Click "Proceed to localhost (unsafe)" which will allow you to use the site for the current browser session.
+  - Click "ADVANCED" to see additional details, including...
+  - Click "Proceed to localhost (unsafe)" which will allow you to use the site for the current browser session.
 
 #### Self-Signed Localhost
 
-The best way to use Chrome with self-signed localhost certificates is to allow it in your chrome settings: [chrome://flags/#allow-insecure-localhost](chrome://flags/#allow-insecure-localhost).
+The best way to use Chrome with self-signed localhost certificates is to allow it in your chrome settings: <chrome://flags/#allow-insecure-localhost>.
 
 ### Files
 
@@ -104,15 +103,15 @@ The certificate and private key are stored in `~/.localhost/`. You can delete th
 
 ## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1.  Fork it
+2.  Create your feature branch (`git checkout -b my-new-feature`)
+3.  Commit your changes (`git commit -am 'Add some feature'`)
+4.  Push to the branch (`git push origin my-new-feature`)
+5.  Create new Pull Request
 
 ## See Also
 
-- [falcon](https://github.com/socketry/falcon) — Uses this `Localhost::Authority` to provide HTTP/2 with minimal configuration for `localhost`.
+  - [falcon](https://github.com/socketry/falcon) — Uses this `Localhost::Authority` to provide HTTP/2 with minimal configuration for `localhost`.
 
 ## License
 

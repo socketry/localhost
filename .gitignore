@@ -11,3 +11,5 @@
 .rspec_status
 
 /ssl/
+
+/gems.locked
