@@ -82,8 +82,11 @@ RSpec.describe Localhost::Authority do
 	end
 	
 	it_behaves_like "invalid protocol", "SSLv3", ["-ssl3"], ["--sslv3"]
-	it_behaves_like "valid protocol", "TLSv1", ["-tls1"], ["--tlsv1"]
-	it_behaves_like "valid protocol", "TLSv1.1", ["-tls1_1"], ["--tlsv1.1"]
+	
+	# Most modern browsers have removed support for these:
+	# it_behaves_like "valid protocol", "TLSv1", ["-tls1"], ["--tlsv1"]
+	# it_behaves_like "valid protocol", "TLSv1.1", ["-tls1_1"], ["--tlsv1.1"]
+	
 	it_behaves_like "valid protocol", "TLSv1.2", ["-tls1_2"], ["--tlsv1.2"]
 	
 	it_behaves_like "valid protocol", "default", [], []
