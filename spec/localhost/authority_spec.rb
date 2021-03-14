@@ -50,8 +50,8 @@ RSpec.describe Localhost::Authority do
 		include_context Async::RSpec::Reactor
 		
 		let(:endpoint) {Async::IO::Endpoint.tcp("localhost", 4040)}
-		let(:server_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.server_context)}
-		let(:client_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.client_context)}
+		let!(:server_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.server_context)}
+		let!(:client_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: subject.client_context)}
 		
 		let(:client) {client_endpoint.connect}
 		
