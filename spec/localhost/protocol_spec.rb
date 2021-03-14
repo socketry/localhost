@@ -24,6 +24,7 @@ require 'async/io/host_endpoint'
 require 'async/io/ssl_endpoint'
 
 require 'async/process'
+require 'fileutils'
 
 RSpec.shared_examples_for "valid protocol" do |protocol, openssl_options, curl_options|
 	it "can connect using #{protocol}" do
