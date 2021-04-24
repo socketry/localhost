@@ -24,12 +24,14 @@ require 'async/io/host_endpoint'
 require 'async/io/ssl_endpoint'
 
 require 'async/process'
+require 'fileutils'
 
 RSpec.describe Localhost::Authority do
 	it "can generate key and certificate" do
 		FileUtils.mkdir_p("ssl")
 		subject.save("ssl")
 		
+		expect(File).to be_exist("ssl/localhost.lock")
 		expect(File).to be_exist("ssl/localhost.crt")
 		expect(File).to be_exist("ssl/localhost.key")
 	end

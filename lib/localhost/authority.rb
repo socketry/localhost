@@ -169,15 +169,21 @@ module Localhost
 		end
 		
 		def save(path)
-			File.write(
-				File.join(path, "#{@hostname}.crt"),
-				self.certificate.to_pem
-			)
+			lockfile_path = File.join(path, "#{@hostname}.lock")
 			
-			File.write(
-				File.join(path, "#{@hostname}.key"),
-				self.key.to_pem
-			)
+			File.open(lockfile_path, File::RDWR|File::CREAT, 0644) do |lockfile|
+				lockfile.flock(File::LOCK_EX)
+				
+				File.write(
+					File.join(path, "#{@hostname}.crt"),
+					self.certificate.to_pem
+				)
+				
+				File.write(
+					File.join(path, "#{@hostname}.key"),
+					self.key.to_pem
+				)
+			end
 		end
 	end
 end
