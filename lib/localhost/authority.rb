@@ -59,6 +59,14 @@ module Localhost
 			@dh_key ||= OpenSSL::PKey::DH.new(BITS)
 		end
 		
+		def key_path()
+			File.join(self.class.path, "#{@hostname}.key")
+		end
+
+		def certificate_path() 
+			File.join(self.class.path, "#{@hostname}.crt")
+		end
+
 		def key
 			@key ||= OpenSSL::PKey::RSA.new(BITS)
 		end
