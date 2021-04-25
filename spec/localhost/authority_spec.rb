@@ -36,6 +36,15 @@ RSpec.describe Localhost::Authority do
 		expect(File).to be_exist("ssl/localhost.key")
 	end
 	
+	it "have correct key and certificate path" do
+		subject.save(subject.class.path)
+		expect(File).to be_exist(subject.certificate_path)
+		expect(File).to be_exist(subject.key_path)
+
+		expect(subject.key_path).to eq(File.join(File.expand_path("~/.localhost"), "localhost.key"))
+		expect(subject.certificate_path).to eq(File.join(File.expand_path("~/.localhost"), "localhost.crt"))
+	end
+
 	describe '#store' do
 		it "can verify certificate" do
 			expect(subject.store.verify(subject.certificate)).to be true
