@@ -82,7 +82,8 @@ RSpec.describe Localhost::Authority do
 		end
 	end
 	
-	it_behaves_like "invalid protocol", "SSLv3", ["-ssl3"], ["--sslv3"]
+	# Curl no longer supports this.
+	# it_behaves_like "invalid protocol", "SSLv3", ["-ssl3"], ["--sslv3"]
 	
 	# Most modern browsers have removed support for these:
 	# it_behaves_like "valid protocol", "TLSv1", ["-tls1"], ["--tlsv1"]
