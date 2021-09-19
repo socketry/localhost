@@ -12,7 +12,7 @@ I wanted to provide a server-agnostic way of doing this, primarily because I thi
 
 ## Usage
 
-Please see the [project documentation](https://ioquatix.github.io/localhost/).
+Please see the [project documentation](https://socketry.github.io/localhost/).
 
 ## Contributing
 
