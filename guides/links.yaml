@@ -1,5 +1,6 @@
 getting-started:
   order: 1
-example-server:
-  description: "An example HTTP client and server using self-signed certificates."
+browser-configuration:
   order: 2
+example-server:
+  order: 3

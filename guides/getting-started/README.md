@@ -16,9 +16,13 @@ $ bundle add localhost
 
 - A {ruby Localhost::Authority} instance which represents a public and private key pair that can be used for both clients and servers.
 
+### Files
+
+The certificate and private key are stored in `~/.localhost/`. You can delete them and they will be regenerated. If you added the certificate to your computer's certificate store/keychain, you'll you'd need to update it.
+
 ## Usage
 
-This example shows how to generate a certificate for an SSL secured server:
+In general, you won't need to do anything at all. The application server you are using will automatically provision a self-signed certificate for localhost. That being said, if you want to implement your own self-signed secure server, the following example demonstrates how to use the {ruby Localhost::Authority}:
 
 ``` ruby
 require 'socket'
@@ -60,31 +64,3 @@ puts client.read(12)
 client.close
 server_thread.join
 ```
-
-If you use Safari to access such a server, it will allow you to add the certificate to your keychain without much work. Once you've done this, you won't need to do it again for any other site when running such a development environment from the same user account.
-
-### Safari
-
-If you use this with a web server, when you open the site in Safari:
-
-![Safari](safari.png)
-
-  - Click "View the certificate" to check that it is the correct certificate.
-  - Click "visit this website" which will prompt you to add the certificate to your keychain. Once you've done this, it should work for a long time.
-
-### Chrome
-
-If you use this with a web server, when you open the site in Chrome:
-
-![Chrome](chrome.png)
-
-  - Click "ADVANCED" to see additional details, including...
-  - Click "Proceed to localhost (unsafe)" which will allow you to use the site for the current browser session.
-
-#### Self-Signed Localhost
-
-The best way to use Chrome with self-signed localhost certificates is to allow it in your chrome settings: <chrome://flags/#allow-insecure-localhost>.
-
-### Files
-
-The certificate and private key are stored in `~/.localhost/`. You can delete them and they will be regenerated. If you added the certificate to your keychain, you'll probably want to delete that too.
