@@ -27,20 +27,32 @@ module Localhost
 			File.expand_path("~/.localhost")
 		end
 		
-		def self.fetch(*args)
-			authority = self.new(*args)
-			path = self.path
+		def self.list(root = self.path)
+			return to_enum(:list) unless block_given?
 			
-			unless authority.load(path)
-				Dir.mkdir(path, 0700) unless File.directory?(path)
+			Dir.glob("*.crt", base: root) do |path|
+				name = File.basename(path, ".crt")
 				
-				authority.save(path)
+				authority = self.new(name, root: root)
+				
+				if authority.load
+					yield authority
+				end
+			end
+		end
+		
+		def self.fetch(*arguments, **options)
+			authority = self.new(*arguments, **options)
+			
+			unless authority.load
+				authority.save
 			end
 			
 			return authority
 		end
 		
-		def initialize(hostname = "localhost")
+		def initialize(hostname = "localhost", root: self.class.path)
+			@root = root
 			@hostname = hostname
 			
 			@key = nil
@@ -48,6 +60,8 @@ module Localhost
 			@certificate = nil
 			@store = nil
 		end
+		
+		attr :hostname
 		
 		BITS = 1024*2
 		
@@ -59,14 +73,14 @@ module Localhost
 			@dh_key ||= OpenSSL::PKey::DH.new(BITS)
 		end
 		
-		def key_path()
-			File.join(self.class.path, "#{@hostname}.key")
+		def key_path
+			File.join(@root, "#{@hostname}.key")
 		end
-
-		def certificate_path() 
-			File.join(self.class.path, "#{@hostname}.crt")
+		
+		def certificate_path
+			File.join(@root, "#{@hostname}.crt")
 		end
-
+		
 		def key
 			@key ||= OpenSSL::PKey::RSA.new(BITS)
 		end
@@ -156,8 +170,8 @@ module Localhost
 			end
 		end
 		
-		def load(path)
-			if File.directory? path
+		def load(path = @root)
+			if File.directory?(path)
 				certificate_path = File.join(path, "#{@hostname}.crt")
 				key_path = File.join(path, "#{@hostname}.key")
 				
@@ -176,7 +190,9 @@ module Localhost
 			end
 		end
 		
-		def save(path)
+		def save(path = @root)
+			Dir.mkdir(path, 0700) unless File.directory?(path)
+			
 			lockfile_path = File.join(path, "#{@hostname}.lock")
 			
 			File.open(lockfile_path, File::RDWR|File::CREAT, 0644) do |lockfile|
