@@ -24,7 +24,8 @@ Please see the [project documentation](https://socketry.github.io/localhost/).
 
 ## See Also
 
-  - [falcon](https://github.com/socketry/falcon) — Uses this `Localhost::Authority` to provide HTTP/2 with minimal configuration for `localhost`.
+	- [Falcon](https://github.com/socketry/falcon) — Uses `Localhost::Authority` to provide HTTP/2 with minimal configuration.
+	- [Puma](https://github.com/puma/puma) — Supports `Localhost::Authority` to provide self-signed HTTP for local development.
 
 ## License
 
