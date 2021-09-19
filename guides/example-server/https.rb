@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 
+# Require the required libraries:
 require 'async'
 require 'async/io/host_endpoint'
 require 'async/io/ssl_endpoint'
 require 'async/http/server'
 require 'async/http/client'
-require 'localhost/authority'
+require 'localhost'
 
 # The (self-signed) authority to use:
 hostname = "localhost"
@@ -13,7 +14,7 @@ authority = Localhost::Authority.fetch(hostname)
 
 # The server app:
 app = lambda do |request|
-  Protocol::HTTP::Response[200, {}, ["Hello World"]]
+	Protocol::HTTP::Response[200, {}, ["Hello World"]]
 end
 
 # Bind to the specified host:
@@ -28,16 +29,16 @@ client_endpoint = Async::IO::SSLEndpoint.new(endpoint, ssl_context: authority.cl
 client = Async::HTTP::Client.new(client_endpoint, protocol: Async::HTTP::Protocol::HTTP1, scheme: "https", authority: authority)
 
 # Run the reactor:
-Async::Reactor.run do |task|
+Async do |task|
 	# Start the server task:
 	server_task = task.async do
 		server.run
 	end
-
+	
 	# Connect to the server:
 	response = client.get("/")
 	puts "Status: #{response.status}\n#{response.read}"
-
+	
 	# Stop the server:
 	server_task.stop
 end

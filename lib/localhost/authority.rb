@@ -22,11 +22,13 @@ require 'yaml'
 require 'openssl'
 
 module Localhost
+	# Represents a single public/private key pair for a given hostname.
 	class Authority
 		def self.path
 			File.expand_path("~/.localhost")
 		end
 		
+		# List all certificate authorities in the given directory:
 		def self.list(root = self.path)
 			return to_enum(:list) unless block_given?
 			
@@ -41,6 +43,8 @@ module Localhost
 			end
 		end
 		
+		# Fetch (load or create) a certificate with the given hostname.
+		# See {#initialize} for the format of the arguments.
 		def self.fetch(*arguments, **options)
 			authority = self.new(*arguments, **options)
 			
@@ -51,6 +55,9 @@ module Localhost
 			return authority
 		end
 		
+		# Create an authority forn the given hostname.
+		# @parameter hostname [String] The common name to use for the certificate.
+		# @parameter root [String] The root path for loading and saving the certificate.
 		def initialize(hostname = "localhost", root: self.class.path)
 			@root = root
 			@hostname = hostname
@@ -61,6 +68,7 @@ module Localhost
 			@store = nil
 		end
 		
+		# The hostname of the certificate authority.
 		attr :hostname
 		
 		BITS = 1024*2
@@ -73,14 +81,17 @@ module Localhost
 			@dh_key ||= OpenSSL::PKey::DH.new(BITS)
 		end
 		
+		# The private key path.
 		def key_path
 			File.join(@root, "#{@hostname}.key")
 		end
 		
+		# The public certificate path.
 		def certificate_path
 			File.join(@root, "#{@hostname}.crt")
 		end
 		
+		# The private key.
 		def key
 			@key ||= OpenSSL::PKey::RSA.new(BITS)
 		end
@@ -89,6 +100,7 @@ module Localhost
 			@key = key
 		end
 		
+		# The certificate name.
 		def name
 			@name ||= OpenSSL::X509::Name.parse("/O=Development/CN=#{@hostname}")
 		end
@@ -97,6 +109,8 @@ module Localhost
 			@name = name
 		end
 		
+		# The public certificate.
+		# @returns [OpenSSL::X509::Certificate] A self-signed certificate.
 		def certificate
 			@certificate ||= OpenSSL::X509::Certificate.new.tap do |certificate|
 				certificate.subject = self.name
@@ -127,7 +141,7 @@ module Localhost
 			end
 		end
 		
-		# The certificate store which is used for validating the server certificate:
+		# The certificate store which is used for validating the server certificate.
 		def store
 			@store ||= OpenSSL::X509::Store.new.tap do |store|
 				store.add_cert(self.certificate)
@@ -136,8 +150,9 @@ module Localhost
 		
 		SERVER_CIPHERS = "EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5".freeze
 		
-		def server_context(*args)
-			OpenSSL::SSL::SSLContext.new(*args).tap do |context|
+		# @returns [OpenSSL::SSL::SSLContext] An context suitable for implementing a secure server.
+		def server_context(*arguments)
+			OpenSSL::SSL::SSLContext.new(*arguments).tap do |context|
 				context.key = self.key
 				context.cert = self.certificate
 				
@@ -160,6 +175,7 @@ module Localhost
 			end
 		end
 		
+		# @returns [OpenSSL::SSL::SSLContext] An context suitable for connecting to a secure server using this authority.
 		def client_context(*args)
 			OpenSSL::SSL::SSLContext.new(*args).tap do |context|
 				context.cert_store = self.store
