@@ -9,6 +9,9 @@ Gem::Specification.new do |spec|
 	spec.authors = ["Samuel Williams"]
 	spec.license = "MIT"
 	
+	spec.cert_chain  = ['release.cert']
+	spec.signing_key = File.expand_path('~/.gem/release.pem')
+	
 	spec.homepage = "https://github.com/socketry/localhost"
 	
 	spec.files = Dir.glob('{lib}/**/*', File::FNM_DOTMATCH, base: __dir__)
