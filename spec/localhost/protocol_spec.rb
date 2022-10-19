@@ -72,6 +72,9 @@ RSpec.describe Localhost::Authority do
 	let(:client) {client_endpoint.connect}
 	
 	let!(:server_task) do
+		# A nasty hax.
+		sleep 10
+		
 		reactor.async do
 			server_endpoint.accept do |peer|
 				peer.write("HTTP/1.1 200 Okay\r\n")
