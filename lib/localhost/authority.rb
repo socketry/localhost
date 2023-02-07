@@ -119,7 +119,7 @@ module Localhost
 				
 				certificate.public_key = self.key.public_key
 				
-				certificate.serial = 1
+				certificate.serial = Time.now.to_i
 				certificate.version = 2
 				
 				certificate.not_before = Time.now
