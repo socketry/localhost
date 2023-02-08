@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Released under the MIT License.
+# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2021, by Ye Lin Aung.
 
 # Require the required libraries:
 require 'async'
