@@ -7,7 +7,6 @@
 # Copyright, 2021, by Ye Lin Aung.
 # Copyright, 2023, by Antonio Terceiro.
 
-require 'yaml'
 require 'openssl'
 
 module Localhost
