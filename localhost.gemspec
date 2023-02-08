@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 	spec.version = Localhost::VERSION
 	
 	spec.summary = "Manage a local certificate authority for self-signed localhost development servers."
-	spec.authors = ["Samuel Williams", "Olle Jonsson", "Ye Lin Aung", "Akshay Birajdar", "Antonio Terceiro", "Gabriel Sobrinho", "Juri Hahn", "Richard S. Leung"]
+	spec.authors = ["Samuel Williams", "Olle Jonsson", "Ye Lin Aung", "Akshay Birajdar", "Antonio Terceiro", "Gabriel Sobrinho", "Juri Hahn", "Richard S. Leung", "Yuuji Yaginuma"]
 	spec.license = "MIT"
 	
 	spec.cert_chain  = ['release.cert']

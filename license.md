@@ -8,6 +8,7 @@ Copyright, 2021, by Akshay Birajdar.
 Copyright, 2021, by Ye Lin Aung.  
 Copyright, 2022, by Juri Hahn.  
 Copyright, 2023, by Antonio Terceiro.  
+Copyright, 2023, by Yuuji Yaginuma.  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
