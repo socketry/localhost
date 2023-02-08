@@ -14,9 +14,10 @@ group :maintenance, optional: true do
 	gem "utopia-project"
 end
 
-group :development do
-	gem 'async-io'
-	gem 'async-rspec'
+group :test do
+	gem "bake-test"
+	gem "bake-test-external"
 	
+	gem 'async-io'
 	gem 'async-process'
 end
