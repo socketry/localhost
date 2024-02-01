@@ -17,6 +17,16 @@ require 'fileutils'
 describe Localhost::Authority do
 	let(:authority) {subject.new}
 	
+	with '#certificate' do
+		it "is not valid for more than 1 year" do
+			certificate = authority.certificate
+			validity = certificate.not_after - certificate.not_before
+			
+			# https://support.apple.com/en-us/102028
+			expect(validity).to be <= 398 * 24 * 60 * 60
+		end
+	end
+	
 	it "can generate key and certificate" do
 		FileUtils.mkdir_p("ssl")
 		authority.save("ssl")
