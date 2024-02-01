@@ -17,8 +17,5 @@ Gem::Specification.new do |spec|
 	
 	spec.files = Dir.glob(['{lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
 	
-	spec.add_development_dependency "bundler"
-	spec.add_development_dependency "covered"
-	spec.add_development_dependency "sus", "~> 0.16"
-	spec.add_development_dependency "sus-fixtures-async"
+	spec.required_ruby_version = ">= 3.0"
 end
