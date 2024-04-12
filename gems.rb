@@ -17,6 +17,7 @@ end
 group :test do
 	gem "sus", "~> 0.16"
 	gem "sus-fixtures-async"
+	gem "sus-fixtures-async-http"
 	gem "covered"
 	
 	gem "bake-test"
