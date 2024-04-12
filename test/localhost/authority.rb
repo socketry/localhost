@@ -14,6 +14,7 @@ require 'async/io/shared_endpoint'
 
 require 'async/process'
 require 'fileutils'
+require 'tempfile'
 
 describe Localhost::Authority do
 	let(:xdg_dir) { File.join(Dir.pwd, "state") }
@@ -33,11 +34,13 @@ describe Localhost::Authority do
 	end
 	
 	it "can generate key and certificate" do
-		authority.save("ssl")
-		
-		expect(File).to be(:exist?, "ssl/localhost.lock")
-		expect(File).to be(:exist?, "ssl/localhost.crt")
-		expect(File).to be(:exist?, "ssl/localhost.key")
+		Dir.mktmpdir('localhost') do |dir|
+			authority.save(dir)
+			
+			expect(File).to be(:exist?, File.expand_path("localhost.lock", dir))
+			expect(File).to be(:exist?, File.expand_path("localhost.crt", dir))
+			expect(File).to be(:exist?, File.expand_path("localhost.key", dir))
+		end
 	end
 	
 	it "have correct key and certificate path" do

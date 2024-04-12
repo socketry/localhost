@@ -4,4 +4,5 @@
 /.covered.db
 /external
 
+# Used as default state directory for tests:
 /state
