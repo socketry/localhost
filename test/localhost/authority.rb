@@ -32,7 +32,6 @@ describe Localhost::Authority do
 	end
 	
 	it "can generate key and certificate" do
-		FileUtils.mkdir_p("ssl")
 		authority.save("ssl")
 		
 		expect(File).to be(:exist?, "ssl/localhost.lock")
@@ -41,7 +40,6 @@ describe Localhost::Authority do
 	end
 	
 	it "have correct key and certificate path" do
-		FileUtils.mkdir_p(xdg_dir)
 		authority.save(authority.class.path)
 		expect(File).to be(:exist?, authority.certificate_path)
 		expect(File).to be(:exist?, authority.key_path)

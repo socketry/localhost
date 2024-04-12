@@ -5,6 +5,3 @@
 
 require 'covered/sus'
 include Covered::Sus
-
-require 'fileutils'
-FileUtils.mkdir_p(::File.expand_path(ENV['XDG_STATE_HOME'] || "~/.local/state"))
