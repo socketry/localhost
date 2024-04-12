@@ -18,7 +18,7 @@ $ bundle add localhost
 
 ### Files
 
-The certificate and private key are stored in `~/.localhost/`. You can delete them and they will be regenerated. If you added the certificate to your computer's certificate store/keychain, you'll you'd need to update it.
+The certificate and private key are stored in `$XDG_STATE_HOME/localhost.rb/` (defaulting to `~/.local/state/localhost.rb/`). You can delete them and they will be regenerated. If you added the certificate to your computer's certificate store/keychain, you'll you'd need to update it.
 
 ## Usage
 

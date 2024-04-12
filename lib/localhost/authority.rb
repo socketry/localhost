@@ -14,7 +14,7 @@ module Localhost
 	# Represents a single public/private key pair for a given hostname.
 	class Authority
 		def self.path
-			File.expand_path("~/.localhost")
+			File.join(File.expand_path(ENV['XDG_STATE_HOME'] || "~/.local/state"), "localhost.rb")
 		end
 		
 		# List all certificate authorities in the given directory:
@@ -49,6 +49,7 @@ module Localhost
 		# @parameter root [String] The root path for loading and saving the certificate.
 		def initialize(hostname = "localhost", root: self.class.path)
 			@root = root
+			@old_root = File.expand_path("~/.localhost")
 			@hostname = hostname
 			
 			@key = nil
@@ -176,6 +177,7 @@ module Localhost
 		end
 		
 		def load(path = @root)
+			dir_migrate(path)
 			if File.directory?(path)
 				certificate_path = File.join(path, "#{@hostname}.crt")
 				key_path = File.join(path, "#{@hostname}.key")
@@ -196,6 +198,7 @@ module Localhost
 		end
 		
 		def save(path = @root)
+			dir_migrate(path)
 			Dir.mkdir(path, 0700) unless File.directory?(path)
 			
 			lockfile_path = File.join(path, "#{@hostname}.lock")
@@ -212,6 +215,14 @@ module Localhost
 					File.join(path, "#{@hostname}.key"),
 					self.key.to_pem
 				)
+			end
+		end
+
+		# Migrates the legacy dir ~/.localhost/ to the XDG compliant directory,
+		# if it exists but the new location does not.
+		def dir_migrate(path = @root)
+			if File.directory?(@old_root) and not File.directory?(path)
+				File.rename(@old_root, path)
 			end
 		end
 	end
