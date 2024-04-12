@@ -12,7 +12,13 @@ I wanted to provide a server-agnostic way of doing this, primarily because I thi
 
 ## Usage
 
-Please see the [project documentation](https://socketry.github.io/localhost/).
+Please see the [project documentation](https://socketry.github.io/localhost/) for more details.
+
+  - [Getting Started](https://socketry.github.io/localhost/guides/getting-started/index) - This guide explains how to use `localhost` for provisioning local TLS certificates for development.
+
+  - [Browser Configuration](https://socketry.github.io/localhost/guides/browser-configuration/index) - This guide explains how to configure your local browser in order to avoid warnings about insecure self-signed certificates.
+
+  - [Example Server](https://socketry.github.io/localhost/guides/example-server/index) - This guide demonstrates how to use <code class="language-ruby">Localhost::Authority</code> to implement a simple HTTPS client & server.
 
 ## Contributing
 
