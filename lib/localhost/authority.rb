@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2023, by Samuel Williams.
+# Copyright, 2018-2024, by Samuel Williams.
 # Copyright, 2019, by Richard S. Leung.
 # Copyright, 2021, by Akshay Birajdar.
 # Copyright, 2021, by Ye Lin Aung.
 # Copyright, 2023, by Antonio Terceiro.
 # Copyright, 2023, by Yuuji Yaginuma.
+# Copyright, 2024, by Colin Shea.
 
 require 'fileutils'
 require 'openssl'

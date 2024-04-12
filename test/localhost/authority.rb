@@ -3,6 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 # Copyright, 2021, by Ye Lin Aung.
+# Copyright, 2024, by Colin Shea.
 
 require 'localhost/authority'
 
