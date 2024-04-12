@@ -8,13 +8,16 @@
 # Copyright, 2023, by Antonio Terceiro.
 # Copyright, 2023, by Yuuji Yaginuma.
 
+require 'fileutils'
 require 'openssl'
 
 module Localhost
 	# Represents a single public/private key pair for a given hostname.
 	class Authority
+		# Where to store the key pair on the filesystem. This is a subdirectory
+		# of $XDG_STATE_HOME, or ~/.local/state/ when that's not defined.
 		def self.path
-			File.expand_path("~/.localhost")
+			File.expand_path("localhost.rb", ENV.fetch("XDG_STATE_HOME", "~/.local/state"))
 		end
 		
 		# List all certificate authorities in the given directory:
@@ -176,27 +179,27 @@ module Localhost
 		end
 		
 		def load(path = @root)
-			if File.directory?(path)
-				certificate_path = File.join(path, "#{@hostname}.crt")
-				key_path = File.join(path, "#{@hostname}.key")
-				
-				return false unless File.exist?(certificate_path) and File.exist?(key_path)
-				
-				certificate = OpenSSL::X509::Certificate.new(File.read(certificate_path))
-				key = OpenSSL::PKey::RSA.new(File.read(key_path))
-				
-				# Certificates with old version need to be regenerated.
-				return false if certificate.version < 2
-				
-				@certificate = certificate
-				@key = key
-				
-				return true
-			end
+			ensure_authority_path_exists(path)
+			
+			certificate_path = File.join(path, "#{@hostname}.crt")
+			key_path = File.join(path, "#{@hostname}.key")
+						
+			return false unless File.exist?(certificate_path) and File.exist?(key_path)
+			
+			certificate = OpenSSL::X509::Certificate.new(File.read(certificate_path))
+			key = OpenSSL::PKey::RSA.new(File.read(key_path))
+			
+			# Certificates with old version need to be regenerated.
+			return false if certificate.version < 2
+			
+			@certificate = certificate
+			@key = key
+			
+			return true
 		end
 		
 		def save(path = @root)
-			Dir.mkdir(path, 0700) unless File.directory?(path)
+			ensure_authority_path_exists(path)
 			
 			lockfile_path = File.join(path, "#{@hostname}.lock")
 			
@@ -212,6 +215,20 @@ module Localhost
 					File.join(path, "#{@hostname}.key"),
 					self.key.to_pem
 				)
+			end
+		end
+		
+		# Ensures that the directory to store the certificate exists. If the legacy
+		# directory (~/.localhost/) exists, it is moved into the new XDG Basedir
+		# compliant directory.
+		def ensure_authority_path_exists(path = @root)
+			old_root = File.expand_path("~/.localhost")
+			
+			if File.directory?(old_root) and not File.directory?(path)
+				# Migrates the legacy dir ~/.localhost/ to the XDG compliant directory
+				File.rename(old_root, path)
+			elsif not File.directory?(path)
+				FileUtils.makedirs(path, mode: 0700)
 			end
 		end
 	end

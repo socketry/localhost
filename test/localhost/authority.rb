@@ -15,8 +15,12 @@ require 'async/process'
 require 'fileutils'
 
 describe Localhost::Authority do
-	let(:authority) {subject.new}
-	
+	let(:xdg_dir) { File.join(Dir.pwd, "state") }
+	let(:authority) {
+		ENV["XDG_STATE_HOME"] = xdg_dir
+		subject.new
+	}
+
 	with '#certificate' do
 		it "is not valid for more than 1 year" do
 			certificate = authority.certificate
@@ -28,7 +32,6 @@ describe Localhost::Authority do
 	end
 	
 	it "can generate key and certificate" do
-		FileUtils.mkdir_p("ssl")
 		authority.save("ssl")
 		
 		expect(File).to be(:exist?, "ssl/localhost.lock")
@@ -41,8 +44,20 @@ describe Localhost::Authority do
 		expect(File).to be(:exist?, authority.certificate_path)
 		expect(File).to be(:exist?, authority.key_path)
 
-		expect(authority.key_path).to be == File.join(File.expand_path("~/.localhost"), "localhost.key")
-		expect(authority.certificate_path).to be == File.join(File.expand_path("~/.localhost"), "localhost.crt")
+		expect(authority.key_path).to be == File.join(xdg_dir, "localhost.rb", "localhost.key")
+		expect(authority.certificate_path).to be == File.join(xdg_dir, "localhost.rb", "localhost.crt")
+	end
+
+	it "properly falls back when XDG_STATE_HOME is not set" do
+		ENV.delete("XDG_STATE_HOME")
+		authority = subject.new
+
+		authority.save(authority.class.path)
+		expect(File).to be(:exist?, authority.certificate_path)
+		expect(File).to be(:exist?, authority.key_path)
+
+		expect(authority.key_path).to be == File.join(File.expand_path("~/.local/state/"), "localhost.rb", "localhost.key")
+		expect(authority.certificate_path).to be == File.join(File.expand_path("~/.local/state/"), "localhost.rb", "localhost.crt")
 	end
 
 	with '#store' do
