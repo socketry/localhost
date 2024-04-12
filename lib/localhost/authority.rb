@@ -222,6 +222,9 @@ module Localhost
 		# Ensures that the directory to store the certificate exists. If the legacy
 		# directory (~/.localhost/) exists, it is moved into the new XDG Basedir
 		# compliant directory.
+		#
+		# After May 2025, this method should be removed as the legacy directory
+		# will no longer be contain valid certificates.
 		def ensure_authority_path_exists(path = @root)
 			old_root = File.expand_path("~/.localhost")
 			
