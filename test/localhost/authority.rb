@@ -17,6 +17,25 @@ require 'fileutils'
 require 'tempfile'
 
 describe Localhost::Authority do
+	def before
+		@old_root = File.expand_path("~/.localhost")
+		@old_root_exists = File.directory?(@old_root)
+
+		if @old_root_exists
+			@tmp_folder = File.expand_path("~/.localhost_test")
+			FileUtils.mkdir_p(@tmp_folder, mode: 0700)
+			FileUtils.cp_r("#{@old_root}/.", @tmp_folder)
+		end
+	end
+
+	def after
+		if @old_root_exists
+			FileUtils.mkdir_p(@old_root, mode: 0700)
+			FileUtils.mv("#{@tmp_folder}/.", @old_root, force: true)
+			FileUtils.rm_r(@tmp_folder)
+		end
+	end
+
 	let(:xdg_dir) { File.join(Dir.pwd, "state") }
 	let(:authority) {
 		ENV["XDG_STATE_HOME"] = xdg_dir
@@ -27,22 +46,22 @@ describe Localhost::Authority do
 		it "is not valid for more than 1 year" do
 			certificate = authority.certificate
 			validity = certificate.not_after - certificate.not_before
-			
+
 			# https://support.apple.com/en-us/102028
 			expect(validity).to be <= 398 * 24 * 60 * 60
 		end
 	end
-	
+
 	it "can generate key and certificate" do
 		Dir.mktmpdir('localhost') do |dir|
 			authority.save(dir)
-			
+
 			expect(File).to be(:exist?, File.expand_path("localhost.lock", dir))
 			expect(File).to be(:exist?, File.expand_path("localhost.crt", dir))
 			expect(File).to be(:exist?, File.expand_path("localhost.key", dir))
 		end
 	end
-	
+
 	it "have correct key and certificate path" do
 		authority.save(authority.class.path)
 		expect(File).to be(:exist?, authority.certificate_path)
@@ -69,45 +88,45 @@ describe Localhost::Authority do
 			expect(authority.store.verify(authority.certificate)).to be == true
 		end
 	end
-	
+
 	with '#server_context' do
 		it "can generate appropriate ssl context" do
 			expect(authority.server_context).to be_a OpenSSL::SSL::SSLContext
 		end
 	end
-	
+
 	with 'client/server' do
 		include Sus::Fixtures::Async::ReactorContext
-		
+
 		let(:endpoint) {Async::IO::Endpoint.tcp("localhost", 4040)}
 		let(:server_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: authority.server_context)}
 		let(:client_endpoint) {Async::IO::SSLEndpoint.new(endpoint, ssl_context: authority.client_context)}
-		
+
 		let(:client) {client_endpoint.connect}
-		
+
 		def before
 			@bound_endpoint = Async::IO::SharedEndpoint.bound(server_endpoint)
-			
+
 			@server_task = reactor.async do
 				@bound_endpoint.accept do |peer|
 					peer.write("Hello World!")
 					peer.close
 				end
 			end
-			
+
 			super
 		end
-		
+
 		def after
 			@server_task&.stop
 			@bound_endpoint&.close
-			
+
 			super
 		end
-		
+
 		it "can verify peer" do
 			expect(client.read(12)).to be == "Hello World!"
-			
+
 			client.close
 		end
 	end

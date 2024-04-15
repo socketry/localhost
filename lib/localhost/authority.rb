@@ -228,10 +228,10 @@ module Localhost
 		def ensure_authority_path_exists(path = @root)
 			old_root = File.expand_path("~/.localhost")
 
-			FileUtils.mkdir_p(File.dirname(path), mode: 0700) unless File.directory?(path)
+			FileUtils.mkdir_p(path, mode: 0700) unless File.directory?(path)
 
 			# Migrates the legacy dir ~/.localhost/ to the XDG compliant directory
-			FileUtils.mv(old_root, path) if File.directory?(old_root)
+			FileUtils.mv("#{@old_root}/.", path, force: true) if File.directory?(old_root)
 		end
 	end
 end
