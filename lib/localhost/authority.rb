@@ -24,7 +24,7 @@ module Localhost
 		# List all certificate authorities in the given directory:
 		def self.list(root = self.path)
 			return to_enum(:list) unless block_given?
-
+			
 			Dir.glob("*.crt", base: root) do |path|
 				name = File.basename(path, ".crt")
 				
@@ -47,7 +47,7 @@ module Localhost
 			
 			return authority
 		end
-
+		
 		# Create an authority forn the given hostname.
 		# @parameter hostname [String] The common name to use for the certificate.
 		# @parameter root [String] The root path for loading and saving the certificate.
