@@ -27,6 +27,7 @@ AValidProtocol = Sus::Shared("valid protocol") do |protocol, openssl_options, cu
 end
 
 describe Localhost::Authority do
+	# We test the actual authority:
 	let(:authority) {subject.new}
 	
 	include Sus::Fixtures::Async::HTTP::ServerContext

@@ -42,7 +42,7 @@ module Localhost
 		
 		# List all certificate authorities in the given directory:
 		def self.list(root = self.path)
-			return to_enum(:list) unless block_given?
+			return to_enum(:list, root) unless block_given?
 			
 			Dir.glob("*.crt", base: root) do |path|
 				name = File.basename(path, ".crt")
@@ -84,10 +84,6 @@ module Localhost
 		attr :hostname
 		
 		BITS = 1024*2
-		
-		def ecdh_key
-			@ecdh_key ||= OpenSSL::PKey::EC.new "prime256v1"
-		end
 		
 		def dh_key
 			@dh_key ||= OpenSSL::PKey::DH.new(BITS)
@@ -176,8 +172,6 @@ module Localhost
 				
 				if context.respond_to? :ecdh_curves=
 					context.ecdh_curves = 'P-256:P-384:P-521'
-				elsif context.respond_to? :tmp_ecdh_callback=
-					context.tmp_ecdh_callback = proc {self.ecdh_key}
 				end
 				
 				context.set_params(
