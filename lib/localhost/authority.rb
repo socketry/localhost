@@ -184,7 +184,7 @@ module Localhost
 			
 			certificate_path = File.join(path, "#{@hostname}.crt")
 			key_path = File.join(path, "#{@hostname}.key")
-						
+			
 			return false unless File.exist?(certificate_path) and File.exist?(key_path)
 			
 			certificate = OpenSSL::X509::Certificate.new(File.read(certificate_path))
@@ -228,12 +228,10 @@ module Localhost
 		def ensure_authority_path_exists(path = @root)
 			old_root = File.expand_path("~/.localhost")
 			
-			if File.directory?(old_root) and not File.directory?(path)
-				# Migrates the legacy dir ~/.localhost/ to the XDG compliant directory
-				File.rename(old_root, path)
-			elsif not File.directory?(path)
-				FileUtils.makedirs(path, mode: 0700)
-			end
+			FileUtils.mkdir_p(path, mode: 0700) unless File.directory?(path)
+			
+			# Migrates the legacy dir ~/.localhost/ to the XDG compliant directory
+			FileUtils.mv("#{@old_root}/.", path, force: true) if File.directory?(old_root)
 		end
 	end
 end
