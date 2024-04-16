@@ -17,8 +17,27 @@ module Localhost
 	class Authority
 		# Where to store the key pair on the filesystem. This is a subdirectory
 		# of $XDG_STATE_HOME, or ~/.local/state/ when that's not defined.
-		def self.path
-			File.expand_path("localhost.rb", ENV.fetch("XDG_STATE_HOME", "~/.local/state"))
+		#
+		# Ensures that the directory to store the certificate exists. If the legacy
+		# directory (~/.localhost/) exists, it is moved into the new XDG Basedir
+		# compliant directory.
+		#
+		# After May 2025, the old_root option may be removed.
+		def self.path(env = ENV, old_root: nil)
+			path = File.expand_path("localhost.rb", env.fetch("XDG_STATE_HOME", "~/.local/state"))
+			
+			unless File.directory?(path)
+				FileUtils.mkdir_p(path, mode: 0700)
+			end
+			
+			# Migrates the legacy dir ~/.localhost/ to the XDG compliant directory
+			old_root ||= File.expand_path("~/.localhost")
+			if File.directory?(old_root)
+				FileUtils.mv(Dir.glob(File.join(old_root, "*")), path, force: true)
+				FileUtils.rmdir(old_root)
+			end
+			
+			return path
 		end
 		
 		# List all certificate authorities in the given directory:
@@ -180,8 +199,6 @@ module Localhost
 		end
 		
 		def load(path = @root)
-			ensure_authority_path_exists(path)
-			
 			certificate_path = File.join(path, "#{@hostname}.crt")
 			key_path = File.join(path, "#{@hostname}.key")
 			
@@ -200,8 +217,6 @@ module Localhost
 		end
 		
 		def save(path = @root)
-			ensure_authority_path_exists(path)
-			
 			lockfile_path = File.join(path, "#{@hostname}.lock")
 			
 			File.open(lockfile_path, File::RDWR|File::CREAT, 0644) do |lockfile|
@@ -217,21 +232,6 @@ module Localhost
 					self.key.to_pem
 				)
 			end
-		end
-		
-		# Ensures that the directory to store the certificate exists. If the legacy
-		# directory (~/.localhost/) exists, it is moved into the new XDG Basedir
-		# compliant directory.
-		#
-		# After May 2025, this method should be removed as the legacy directory
-		# will no longer be contain valid certificates.
-		def ensure_authority_path_exists(path = @root)
-			old_root = File.expand_path("~/.localhost")
-			
-			FileUtils.mkdir_p(path, mode: 0700) unless File.directory?(path)
-			
-			# Migrates the legacy dir ~/.localhost/ to the XDG compliant directory
-			FileUtils.mv("#{@old_root}/.", path, force: true) if File.directory?(old_root)
 		end
 	end
 end

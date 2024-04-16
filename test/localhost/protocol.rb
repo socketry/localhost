@@ -7,10 +7,6 @@ require 'localhost/authority'
 
 require 'sus/fixtures/async/http/server_context'
 
-require 'async/io/host_endpoint'
-require 'async/io/ssl_endpoint'
-require 'async/io/shared_endpoint'
-
 require 'async/process'
 require 'fileutils'
 
@@ -57,4 +53,13 @@ describe Localhost::Authority do
 	it_behaves_like AValidProtocol, "default", [], []
 	it_behaves_like AValidProtocol, "TLSv1.2", ["-tls1_2"], ["--tlsv1.2"]
 	it_behaves_like AValidProtocol, "TLSv1.3", ["-tls1_3"], ["--tlsv1.3"]
+	
+	it "can connect using HTTPS" do
+		response = client.get("/")
+		
+		expect(response).to be(:success?)
+	ensure
+		response&.finish
+		client.close
+	end
 end
