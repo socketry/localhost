@@ -3,26 +3,28 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 gemspec
 
 group :maintenance, optional: true do
 	gem "bake-gem"
 	gem "bake-modernize"
+	gem "bake-releases"
 	
 	gem "utopia-project"
 end
 
 group :test do
-	gem "sus", "~> 0.16"
+	gem "sus"
+	gem "covered"
+	gem "decode"
+	gem "rubocop"
+	
+	gem "io-endpoint"
 	gem "sus-fixtures-async"
 	gem "sus-fixtures-async-http"
-	gem "covered"
 	
 	gem "bake-test"
 	gem "bake-test-external"
-	
-	gem 'async-io'
-	gem 'async-process'
 end

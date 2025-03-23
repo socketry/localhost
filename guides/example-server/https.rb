@@ -6,12 +6,12 @@
 # Copyright, 2021, by Ye Lin Aung.
 
 # Require the required libraries:
-require 'async'
-require 'async/io/host_endpoint'
-require 'async/io/ssl_endpoint'
-require 'async/http/server'
-require 'async/http/client'
-require 'localhost'
+require "async"
+require "async/io/host_endpoint"
+require "async/io/ssl_endpoint"
+require "async/http/server"
+require "async/http/client"
+require "localhost"
 
 # The (self-signed) authority to use:
 hostname = "localhost"

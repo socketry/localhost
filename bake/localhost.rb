@@ -5,7 +5,7 @@
 
 # List all local authorities.
 def list
-	require_relative '../lib/localhost'
+	require_relative "../lib/localhost"
 	
 	terminal = self.terminal
 	
@@ -24,7 +24,7 @@ end
 private
 
 def terminal(out = $stdout)
-	require 'console/terminal'
+	require "console/terminal"
 	
 	terminal = Console::Terminal.for(out)
 	

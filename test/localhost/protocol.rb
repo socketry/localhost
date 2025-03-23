@@ -3,26 +3,25 @@
 # Released under the MIT License.
 # Copyright, 2018-2024, by Samuel Williams.
 
-require 'localhost/authority'
+require "localhost/authority"
 
-require 'sus/fixtures/async/http/server_context'
-
-require 'async/process'
-require 'fileutils'
+require "sus/fixtures/async/http/server_context"
+require "io/endpoint/ssl_endpoint"
+require "fileutils"
 
 AValidProtocol = Sus::Shared("valid protocol") do |protocol, openssl_options, curl_options|
 	it "can connect using #{protocol} using openssl" do
 		uri = URI.parse(bound_url)
 		
-		status = Async::Process.spawn("openssl", "s_client", "-connect", "#{uri.host}:#{uri.port}", *openssl_options)
+		status = system("openssl", "s_client", "-connect", "#{uri.host}:#{uri.port}", *openssl_options, in: IO::NULL)
 		
-		expect(status).to be(:success?)
+		expect(status).to be == true
 	end
 	
 	it "can connect using HTTP over #{protocol} using curl" do
-		status = Async::Process.spawn("curl", "--verbose", "--insecure", bound_url, *curl_options)
+		status = system("curl", "--verbose", "--insecure", bound_url, *curl_options)
 		
-		expect(status).to be(:success?)
+		expect(status).to be == true
 	end
 end
 
@@ -36,12 +35,14 @@ describe Localhost::Authority do
 		"https://localhost:0"
 	end
 	
-	def make_server_endpoint(bound_endpoint)
-		Async::IO::SSLEndpoint.new(super, ssl_context: authority.server_context)
+	def endpoint_options
+		super.merge(
+			ssl_context: authority.server_context
+		)
 	end
 	
 	def make_client_endpoint(bound_endpoint)
-		Async::IO::SSLEndpoint.new(super, ssl_context: authority.client_context)
+		IO::Endpoint::SSLEndpoint.new(super, ssl_context: authority.client_context)
 	end
 	
 	# Curl no longer supports this.

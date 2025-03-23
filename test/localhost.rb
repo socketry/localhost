@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2023, by Samuel Williams.
 
-require 'localhost'
+require "localhost"
 
 describe Localhost do
 	it "has a version number" do

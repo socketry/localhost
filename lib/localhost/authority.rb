@@ -8,9 +8,10 @@
 # Copyright, 2023, by Antonio Terceiro.
 # Copyright, 2023, by Yuuji Yaginuma.
 # Copyright, 2024, by Colin Shea.
+# Copyright, 2024, by Aurel Branzeanu.
 
-require 'fileutils'
-require 'openssl'
+require "fileutils"
+require "openssl"
 
 module Localhost
 	# Represents a single public/private key pair for a given hostname.
@@ -171,7 +172,7 @@ module Localhost
 				end
 				
 				if context.respond_to? :ecdh_curves=
-					context.ecdh_curves = 'P-256:P-384:P-521'
+					context.ecdh_curves = "P-256:P-384:P-521"
 				end
 				
 				context.set_params(
