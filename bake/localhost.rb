@@ -35,3 +35,7 @@ def fetch(hostname)
 		}
 	end
 end
+
+def purge
+	Localhost::State.purge
+end

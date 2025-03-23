@@ -35,6 +35,10 @@ describe Localhost::Authority do
 		"https://localhost:0"
 	end
 	
+	def timeout
+		nil
+	end
+	
 	def endpoint_options
 		super.merge(
 			ssl_context: authority.server_context

@@ -38,31 +38,6 @@ describe Localhost::Authority do
 		expect(File).to be(:exist?, File.expand_path("localhost.key", @root))
 	end
 	
-	with ".path" do
-		it "uses XDG_STATE_HOME" do
-			env = {"XDG_STATE_HOME" => @root}
-			
-			expect(Localhost::Authority.path(env)).to be == File.expand_path("localhost.rb", @root)
-		end
-		
-		it "copies legacy directory" do
-			xdg_state_home = File.join(@root, ".local", "state")
-			env = {"XDG_STATE_HOME" => xdg_state_home}
-			
-			old_root = File.join(@root, ".localhost")
-			Dir.mkdir(old_root)
-			File.write(File.join(old_root, "localhost.crt"), "*fake certificate*")
-			File.write(File.join(old_root, "localhost.key"), "*fake key*")
-			
-			path = Localhost::Authority.path(env, old_root: old_root)
-			expect(path).to be == File.expand_path("localhost.rb", xdg_state_home)
-			expect(File).to be(:exist?, File.expand_path("localhost.crt", path))
-			expect(File).to be(:exist?, File.expand_path("localhost.key", path))
-			
-			expect(File).not.to be(:exist?, old_root)
-		end
-	end
-	
 	with "#certificate" do
 		it "is not valid for more than 1 year" do
 			certificate = authority.certificate
@@ -79,14 +54,14 @@ describe Localhost::Authority do
 		end
 	end
 	
-	with "#name" do
-		it "can get name" do
-			expect(authority.name.to_s).to be == "/O=Development/CN=localhost"
+	with "#subject" do
+		it "can get subject" do
+			expect(authority.subject.to_s).to be == "/O=localhost.rb/CN=localhost"
 		end
 		
-		it "can set name" do
-			authority.name = OpenSSL::X509::Name.parse("/CN=example.localhost")
-			expect(authority.name.to_s).to be == "/CN=example.localhost"
+		it "can set subject" do
+			authority.subject = OpenSSL::X509::Name.parse("/CN=example.localhost")
+			expect(authority.subject.to_s).to be == "/CN=example.localhost"
 		end
 	end
 	

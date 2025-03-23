@@ -13,36 +13,14 @@
 require "fileutils"
 require "openssl"
 
+require_relative "state"
+require_relative "issuer"
+
 module Localhost
 	# Represents a single public/private key pair for a given hostname.
 	class Authority
-		# Where to store the key pair on the filesystem. This is a subdirectory
-		# of $XDG_STATE_HOME, or ~/.local/state/ when that's not defined.
-		#
-		# Ensures that the directory to store the certificate exists. If the legacy
-		# directory (~/.localhost/) exists, it is moved into the new XDG Basedir
-		# compliant directory.
-		#
-		# After May 2025, the old_root option may be removed.
-		def self.path(env = ENV, old_root: nil)
-			path = File.expand_path("localhost.rb", env.fetch("XDG_STATE_HOME", "~/.local/state"))
-			
-			unless File.directory?(path)
-				FileUtils.mkdir_p(path, mode: 0700)
-			end
-			
-			# Migrates the legacy dir ~/.localhost/ to the XDG compliant directory
-			old_root ||= File.expand_path("~/.localhost")
-			if File.directory?(old_root)
-				FileUtils.mv(Dir.glob(File.join(old_root, "*")), path, force: true)
-				FileUtils.rmdir(old_root)
-			end
-			
-			return path
-		end
-		
 		# List all certificate authorities in the given directory:
-		def self.list(root = self.path)
+		def self.list(root = State.path)
 			return to_enum(:list, root) unless block_given?
 			
 			Dir.glob("*.crt", base: root) do |path|
@@ -71,15 +49,18 @@ module Localhost
 		# Create an authority forn the given hostname.
 		# @parameter hostname [String] The common name to use for the certificate.
 		# @parameter root [String] The root path for loading and saving the certificate.
-		def initialize(hostname = "localhost", root: self.class.path)
+		def initialize(hostname = "localhost", root: State.path, issuer: Issuer.fetch)
 			@root = root
 			@hostname = hostname
+			@issuer = issuer
 			
+			@subject = nil
 			@key = nil
-			@name = nil
 			@certificate = nil
 			@store = nil
 		end
+		
+		attr :issuer
 		
 		# The hostname of the certificate authority.
 		attr :hostname
@@ -110,21 +91,22 @@ module Localhost
 		end
 		
 		# The certificate name.
-		def name
-			@name ||= OpenSSL::X509::Name.parse("/O=Development/CN=#{@hostname}")
+		def subject
+			@subject ||= OpenSSL::X509::Name.parse("/O=localhost.rb/CN=#{@hostname}")
 		end
 		
-		def name= name
-			@name = name
+		def subject= subject
+			@subject = subject
 		end
 		
 		# The public certificate.
 		# @returns [OpenSSL::X509::Certificate] A self-signed certificate.
 		def certificate
+			issuer = @issuer || self
+			
 			@certificate ||= OpenSSL::X509::Certificate.new.tap do |certificate|
-				certificate.subject = self.name
-				# We use the same issuer as the subject, which makes this certificate self-signed:
-				certificate.issuer = self.name
+				certificate.subject = self.subject
+				certificate.issuer = issuer.subject
 				
 				certificate.public_key = self.key.public_key
 				
@@ -136,24 +118,23 @@ module Localhost
 				
 				extension_factory = OpenSSL::X509::ExtensionFactory.new
 				extension_factory.subject_certificate = certificate
-				extension_factory.issuer_certificate = certificate
 				
-				certificate.extensions = [
-					extension_factory.create_extension("basicConstraints", "CA:FALSE", true),
-					extension_factory.create_extension("subjectKeyIdentifier", "hash"),
-				]
-				
-				certificate.add_extension extension_factory.create_extension("authorityKeyIdentifier", "keyid:always,issuer:always")
+				certificate.add_extension extension_factory.create_extension("basicConstraints", "CA:FALSE", true)
+				certificate.add_extension extension_factory.create_extension("subjectKeyIdentifier", "hash")
 				certificate.add_extension extension_factory.create_extension("subjectAltName", "DNS: #{@hostname}")
 				
-				certificate.sign self.key, OpenSSL::Digest::SHA256.new
+				certificate.sign issuer.key, OpenSSL::Digest::SHA256.new
 			end
 		end
 		
 		# The certificate store which is used for validating the server certificate.
 		def store
 			@store ||= OpenSSL::X509::Store.new.tap do |store|
-				store.add_cert(self.certificate)
+				if @issuer
+					store.add_cert(@issuer.certificate)
+				else
+					store.add_cert(self.certificate)
+				end
 			end
 		end
 		
@@ -164,6 +145,10 @@ module Localhost
 			OpenSSL::SSL::SSLContext.new(*arguments).tap do |context|
 				context.key = self.key
 				context.cert = self.certificate
+				
+				if @issuer
+					context.extra_chain_cert = [@issuer.certificate]
+				end
 				
 				context.session_id_context = "localhost"
 				
