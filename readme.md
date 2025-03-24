@@ -22,7 +22,12 @@ Please see the [project documentation](https://socketry.github.io/localhost/) fo
 
 ## Releases
 
-There are no documented releases.
+Please see the [project releases](https://socketry.github.io/localhost/releases/index) for all releases.
+
+### v1.4.0
+
+  - Add `localhost:purge` to delete all certificates.
+  - Add `localhost:install` to install the issuer certificate in the local trust store.
 
 ## See Also
 
