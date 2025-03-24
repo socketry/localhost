@@ -36,6 +36,12 @@ def fetch(hostname)
 	end
 end
 
+def install(name: nil)
+	issuer = Localhost::Issuer.fetch(name)
+	
+	Localhost::System.current.install(issuer.certificate_path)
+end
+
 def purge
 	Localhost::State.purge
 end

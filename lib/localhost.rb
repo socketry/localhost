@@ -5,6 +5,7 @@
 
 require_relative "localhost/version"
 require_relative "localhost/authority"
+require_relative "localhost/system"
 
 # @namespace
 module Localhost
