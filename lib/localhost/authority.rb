@@ -118,6 +118,7 @@ module Localhost
 				
 				extension_factory = OpenSSL::X509::ExtensionFactory.new
 				extension_factory.subject_certificate = certificate
+				extension_factory.issuer_certificate = @issuer&.certificate || certificate
 				
 				certificate.add_extension extension_factory.create_extension("basicConstraints", "CA:FALSE", true)
 				certificate.add_extension extension_factory.create_extension("subjectKeyIdentifier", "hash")
