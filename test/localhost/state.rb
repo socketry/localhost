@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2024, by Samuel Williams.
-# Copyright, 2021, by Ye Lin Aung.
-# Copyright, 2024, by Colin Shea.
-# Copyright, 2024, by Aurel Branzeanu.
+# Copyright, 2025, by Samuel Williams.
 
 require "localhost/authority"
 

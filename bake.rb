@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# Released under the MIT License.
+# Copyright, 2025, by Samuel Williams.
+
 # Update the project documentation with the new version number.
 #
 # @parameter version [String] The new version number.
