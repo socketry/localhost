@@ -17,8 +17,10 @@ AValidProtocol = Sus::Shared("valid protocol") do |protocol, openssl_options, cu
 		
 		expect(status).to be == true
 	end
-	
+
 	it "can connect using HTTP over #{protocol} using curl" do
+		skip_if_ruby_platform("darwin") # curl on macOS does not support --tlsv1.3
+		
 		status = system("curl", "--verbose", "--insecure", bound_url, *curl_options)
 		
 		expect(status).to be == true
