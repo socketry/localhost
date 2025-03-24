@@ -123,6 +123,7 @@ module Localhost
 				certificate.add_extension extension_factory.create_extension("basicConstraints", "CA:FALSE", true)
 				certificate.add_extension extension_factory.create_extension("subjectKeyIdentifier", "hash")
 				certificate.add_extension extension_factory.create_extension("subjectAltName", "DNS: #{@hostname}")
+				certificate.add_extension extension_factory.create_extension("authorityKeyIdentifier", "keyid:always,issuer:always")
 				
 				certificate.sign issuer.key, OpenSSL::Digest::SHA256.new
 			end
