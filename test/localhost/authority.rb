@@ -25,7 +25,7 @@ describe Localhost::Authority do
 		end
 	end
 	
-	let(:authority) {subject.new("localhost", root: @root)}
+	let(:authority) {subject.new("localhost", path: @root)}
 	
 	it "have correct key and certificate path" do
 		authority.save
@@ -93,9 +93,7 @@ describe Localhost::Authority do
 	end
 	
 	with ".list" do
-		def before
-			super
-			
+		before do
 			authority.save
 		end
 		
@@ -118,14 +116,14 @@ describe Localhost::Authority do
 		end
 		
 		it "can fetch existing authority" do
-			fetched_authority = Localhost::Authority.fetch("localhost", root: @root)
+			fetched_authority = Localhost::Authority.fetch("localhost", path: @root)
 			expect(fetched_authority).to have_attributes(
 				hostname: be == "localhost",
 			)
 		end
 		
 		it "can create new authority" do
-			fetched_authority = Localhost::Authority.fetch("example.com", root: @root)
+			fetched_authority = Localhost::Authority.fetch("example.com", path: @root)
 			expect(fetched_authority).to have_attributes(
 				hostname: be == "example.com",
 			)

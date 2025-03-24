@@ -20,13 +20,13 @@ module Localhost
 	# Represents a single public/private key pair for a given hostname.
 	class Authority
 		# List all certificate authorities in the given directory:
-		def self.list(root = State.path)
-			return to_enum(:list, root) unless block_given?
+		def self.list(path = State.path)
+			return to_enum(:list, path) unless block_given?
 			
-			Dir.glob("*.crt", base: root) do |path|
-				name = File.basename(path, ".crt")
+			Dir.glob("*.crt", base: path) do |certificate_path|
+				hostname = File.basename(certificate_path, ".crt")
 				
-				authority = self.new(name, root: root)
+				authority = self.new(hostname, path: path)
 				
 				if authority.load
 					yield authority
@@ -48,9 +48,9 @@ module Localhost
 		
 		# Create an authority forn the given hostname.
 		# @parameter hostname [String] The common name to use for the certificate.
-		# @parameter root [String] The root path for loading and saving the certificate.
-		def initialize(hostname = "localhost", root: State.path, issuer: Issuer.fetch)
-			@root = root
+		# @parameter path [String] The path path for loading and saving the certificate.
+		def initialize(hostname = "localhost", path: State.path, issuer: Issuer.fetch)
+			@path = path
 			@hostname = hostname
 			@issuer = issuer
 			
@@ -73,12 +73,12 @@ module Localhost
 		
 		# The private key path.
 		def key_path
-			File.join(@root, "#{@hostname}.key")
+			File.join(@path, "#{@hostname}.key")
 		end
 		
 		# The public certificate path.
 		def certificate_path
-			File.join(@root, "#{@hostname}.crt")
+			File.join(@path, "#{@hostname}.crt")
 		end
 		
 		# The private key.
@@ -179,7 +179,7 @@ module Localhost
 			end
 		end
 		
-		def load(path = @root)
+		def load(path = @path)
 			certificate_path = File.join(path, "#{@hostname}.crt")
 			key_path = File.join(path, "#{@hostname}.key")
 			
@@ -197,7 +197,7 @@ module Localhost
 			return true
 		end
 		
-		def save(path = @root)
+		def save(path = @path)
 			lockfile_path = File.join(path, "#{@hostname}.lock")
 			
 			File.open(lockfile_path, File::RDWR|File::CREAT, 0644) do |lockfile|
