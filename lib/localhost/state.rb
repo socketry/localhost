@@ -14,6 +14,8 @@ module Localhost
 		# Ensures that the directory to store the certificate exists. If the legacy
 		# directory (~/.localhost/) exists, it is moved into the new XDG Basedir
 		# compliant directory.
+		#
+		# @parameter env [Hash] The environment to use for configuration.
 		def self.path(env = ENV)
 			path = File.expand_path("localhost.rb", env.fetch("XDG_STATE_HOME", "~/.local/state"))
 			
@@ -24,6 +26,9 @@ module Localhost
 			return path
 		end
 		
+		# Delete the directory where the key pair is stored.
+		#
+		# @parameter env [Hash] The environment to use for configuration.
 		def self.purge(env = ENV)
 			path = self.path(env)
 			

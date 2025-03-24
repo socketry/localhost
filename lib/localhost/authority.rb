@@ -67,39 +67,47 @@ module Localhost
 		
 		BITS = 1024*2
 		
+		# @returns [OpenSSL::PKey::DH] A Diffie-Hellman key suitable for secure key exchange.
 		def dh_key
 			@dh_key ||= OpenSSL::PKey::DH.new(BITS)
 		end
 		
-		# The private key path.
+		# @returns [String] The path to the private key.
 		def key_path
 			File.join(@path, "#{@hostname}.key")
 		end
 		
-		# The public certificate path.
+		# @returns [String] The path to the public certificate.
 		def certificate_path
 			File.join(@path, "#{@hostname}.crt")
 		end
 		
-		# The private key.
+		# @returns [OpenSSL::PKey::RSA] The private key.
 		def key
 			@key ||= OpenSSL::PKey::RSA.new(BITS)
 		end
 		
+		# Set the private key.
+		#
+		# @parameter key [OpenSSL::PKey::RSA] The private key.
 		def key= key
 			@key = key
 		end
 		
-		# The certificate name.
+		# @returns [OpenSSL::X509::Name] The subject name for the certificate.
 		def subject
 			@subject ||= OpenSSL::X509::Name.parse("/O=localhost.rb/CN=#{@hostname}")
 		end
 		
+		# Set the subject name for the certificate.
+		#
+		# @parameter subject [OpenSSL::X509::Name] The subject name.
 		def subject= subject
 			@subject = subject
 		end
 		
-		# The public certificate.
+		# Generates a self-signed certificate if one does not already exist for the given hostname.
+		# 
 		# @returns [OpenSSL::X509::Certificate] A self-signed certificate.
 		def certificate
 			issuer = @issuer || self
@@ -130,6 +138,8 @@ module Localhost
 		end
 		
 		# The certificate store which is used for validating the server certificate.
+		#
+		# @returns [OpenSSL::X509::Store] The certificate store with the issuer certificate.
 		def store
 			@store ||= OpenSSL::X509::Store.new.tap do |store|
 				if @issuer
@@ -180,6 +190,10 @@ module Localhost
 			end
 		end
 		
+		# Load the certificate and key from the given path.
+		#
+		# @parameter path [String] The path to the certificate and key.
+		# @returns [Boolean] Whether the certificate and key were successfully loaded.
 		def load(path = @path)
 			certificate_path = File.join(path, "#{@hostname}.crt")
 			key_path = File.join(path, "#{@hostname}.key")
@@ -198,6 +212,9 @@ module Localhost
 			return true
 		end
 		
+		# Save the certificate and key to the given path.
+		#
+		# @parameter path [String] The path to save the certificate and key.
 		def save(path = @path)
 			lockfile_path = File.join(path, "#{@hostname}.lock")
 			
@@ -214,6 +231,8 @@ module Localhost
 					self.key.to_pem
 				)
 			end
+			
+			return true
 		end
 	end
 end

@@ -29,43 +29,48 @@ module Localhost
 			return issuer
 		end
 		
-		def initialize(name = "development", path: State.path, bits: BITS, validity: VALIDITY)
+		# Initialize the issuer with the given name.
+		# 
+		# @parameter name [String] The common name to use for the certificate.
+		# @parameter path [String] The path path for loading and saving the certificate.
+		def initialize(name = "development", path: State.path)
 			@name = name
 			@path = path
-			
-			@bits = bits
-			@validity = validity
 			
 			@subject = nil
 			@key = nil
 			@certificate = nil
 		end
 		
-		# The private key path.
+		# @returns [String] The path to the private key.
 		def key_path
 			File.join(@path, "#{@name}.key")
 		end
 		
-		# The public certificate path.
+		# @returns [String] The path to the public certificate.
 		def certificate_path
 			File.join(@path, "#{@name}.crt")
 		end
 		
-		# The certificate subject (name).
+		# @returns [OpenSSL::X509::Name] The subject name for the certificate.
 		def subject
 			@subject ||= OpenSSL::X509::Name.parse("/O=localhost.rb/CN=#{@name}")
 		end
 		
+		# Set the subject name for the certificate.
+		#
+		# @parameter subject [OpenSSL::X509::Name] The subject name for the certificate.
 		def subject= subject
 			@subject = subject
 		end
 		
-		# The private key.
+		# @returns [OpenSSL::PKey::RSA] The private key.
 		def key
 			@key ||= OpenSSL::PKey::RSA.new(BITS)
 		end
 		
 		# The public certificate.
+		#
 		# @returns [OpenSSL::X509::Certificate] A self-signed certificate.
 		def certificate
 			@certificate ||= OpenSSL::X509::Certificate.new.tap do |certificate|
@@ -79,7 +84,7 @@ module Localhost
 				certificate.version = 2
 				
 				certificate.not_before = Time.now - 10
-				certificate.not_after = Time.now + @validity
+				certificate.not_after = Time.now + VALIDITY
 				
 				extension_factory = ::OpenSSL::X509::ExtensionFactory.new
 				extension_factory.subject_certificate = certificate
@@ -94,6 +99,10 @@ module Localhost
 			end
 		end
 		
+		# Load the certificate and key from the given path.
+		#
+		# @parameter path [String] The path to load the certificate and key.
+		# @returns [Boolean] True if the certificate and key were loaded successfully.
 		def load(path = @root)
 			certificate_path = self.certificate_path
 			key_path = self.key_path
@@ -109,10 +118,14 @@ module Localhost
 			return true
 		end
 		
+		# @returns [String] The path to the lockfile.
 		def lockfile_path
 			File.join(@path, "#{@name}.lock")
 		end
 		
+		# Save the certificate and key to the given path.
+		#
+		# @parameter path [String] The path to save the certificate and key.
 		def save(path = @root)
 			lockfile_path = self.lockfile_path
 			
@@ -129,6 +142,8 @@ module Localhost
 					self.key.to_pem
 				)
 			end
+			
+			return true
 		end
 	end
 end
