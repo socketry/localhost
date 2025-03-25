@@ -8,10 +8,10 @@ module Localhost
 		def self.current
 			case RUBY_PLATFORM
 			when /darwin/
-				require 'localhost/system/darwin'
+				require "localhost/system/darwin"
 				Darwin
 			when /linux/
-				require 'localhost/system/linux'
+				require "localhost/system/linux"
 				Linux
 			else
 				raise NotImplementedError, "Unsupported platform: #{RUBY_PLATFORM}"
