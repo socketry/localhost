@@ -27,10 +27,12 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-    - uses: ruby/setup-ruby@v1
+    - uses: ruby/setup-ruby-pkgs@v1
       with:
         ruby-version: ${{matrix.ruby}}
         bundler-cache: true
+        apt-get: ragel
+        brew: ragel
     
     - name: Run tests
       timeout-minutes: 10
