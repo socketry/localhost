@@ -3,11 +3,13 @@
 # Released under the MIT License.
 # Copyright, 2025, by Samuel Williams.
 
-require "etc"
-
 module Localhost
 	module System
-		module Darwin
+		# Linux specific system operations.
+		module Linux
+			# Install a certificate into the system trust store.
+			#
+			# @parameter certificate [String] The path to the certificate file.
 			def self.install(certificate)
 				filename = File.basename(certificate)
 				destination = "/usr/local/share/ca-certificates/localhost-#{filename}"
