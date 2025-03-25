@@ -19,7 +19,15 @@ require_relative "issuer"
 module Localhost
 	# Represents a single public/private key pair for a given hostname.
 	class Authority
-		# List all certificate authorities in the given directory:
+		# @returns [String] The path to the directory containing the certificate authorities.
+		def self.path
+			State.path
+		end
+		
+		# List all certificate authorities in the given directory.
+		# 
+		# @parameter path [String] The path to the directory containing the certificate authorities.
+		# @yields [Authority] Each certificate authority in the directory.
 		def self.list(path = State.path)
 			return to_enum(:list, path) unless block_given?
 			

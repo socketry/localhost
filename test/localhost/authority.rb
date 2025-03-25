@@ -27,6 +27,12 @@ describe Localhost::Authority do
 	
 	let(:authority) {subject.new("localhost", path: @root)}
 	
+	with ".path" do
+		it "returns the state path" do
+			expect(subject.path).to be == Localhost::State.path
+		end
+	end
+	
 	it "have correct key and certificate path" do
 		authority.save
 		
