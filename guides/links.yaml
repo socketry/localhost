@@ -1,6 +1,4 @@
 getting-started:
   order: 1
-browser-configuration:
-  order: 2
 example-server:
-  order: 3
+  order: 2

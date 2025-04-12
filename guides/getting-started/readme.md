@@ -10,10 +10,19 @@ Add the gem to your project:
 $ bundle add localhost
 ~~~
 
+Then, generate an issuer certificate and install it:
+
+~~~ bash
+$ bundle exec bake localhost:install
+~~~
+
+You may be prompted for a password to install the certificate. This is the password for your local keychain.
+
 ## Core Concepts
 
-`localhost` has one core concept:
+`localhost` has two core concepts:
 
+- A {ruby Localhost::Issuer} instance which represents a certificate authority (CA) that can be used to sign certificates for localhost.
 - A {ruby Localhost::Authority} instance which represents a public and private key pair that can be used for both clients and servers.
 
 ### Files
