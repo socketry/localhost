@@ -18,6 +18,16 @@ $ bundle exec bake localhost:install
 
 You may be prompted for a password to install the certificate. This is the password for your local keychain.
 
+### Purging your certificates
+
+If you have an existing installation which does not use the issuer certificate, you can remove the existing certificates and start over:
+
+~~~ bash
+$ bundle exec bake localhost:purge
+~~~
+
+Note this will remove all certificates in the `$XDG_STATE_HOME/localhost.rb/` directory, but it won't remove the issuer certificate that was installed in your keychain.
+
 ## Core Concepts
 
 `localhost` has two core concepts:
