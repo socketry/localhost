@@ -12,7 +12,7 @@ module Localhost
 			# @parameter certificate [String] The path to the certificate file.
 			def self.install(certificate)
 				login_keychain = File.expand_path("~/Library/Keychains/login.keychain-db")
-
+				
 				system(
 					"security", "add-trusted-cert",
 					"-d", "-r", "trustRoot",

@@ -29,12 +29,15 @@ module Localhost
 			return issuer
 		end
 		
+		# The default certificate issuer name.
+		NAME = "development"
+		
 		# Initialize the issuer with the given name.
 		# 
 		# @parameter name [String] The common name to use for the certificate.
 		# @parameter path [String] The path path for loading and saving the certificate.
-		def initialize(name = "development", path: State.path)
-			@name = name
+		def initialize(name = nil, path: State.path)
+			@name = name || NAME
 			@path = path
 			
 			@subject = nil
