@@ -242,5 +242,23 @@ module Localhost
 			
 			return true
 		end
+		
+		# @returns A hash representation of the authority's certificate details.
+		def to_h
+			{
+				hostname: @hostname,
+				certificate_path: certificate_path,
+				key_path: key_path,
+				expires_at: certificate.not_after,
+			}
+		end
+		
+		def as_json(...)
+			self.to_h
+		end
+		
+		def to_json(...)
+			self.as_json.to_json(...)
+		end
 	end
 end

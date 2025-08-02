@@ -33,9 +33,17 @@ module Localhost
 				else
 					raise "No known system trust store found. Please install the certificate manually."
 				end
-
-				system("sudo", "cp", certificate, destination)
-				system("sudo", command)
+				
+				success = system("sudo", "cp", certificate, destination)
+				success &= system("sudo", command)
+				
+				if success
+					$stderr.puts "Installed certificate to #{destination}"
+					
+					return true
+				else
+					raise "Failed to install certificate: #{certificate}"
+				end
 			end
 		end
 	end

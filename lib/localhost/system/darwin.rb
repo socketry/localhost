@@ -13,12 +13,20 @@ module Localhost
 			def self.install(certificate)
 				login_keychain = File.expand_path("~/Library/Keychains/login.keychain-db")
 				
-				system(
+				success = system(
 					"security", "add-trusted-cert",
 					"-d", "-r", "trustRoot",
 					"-k", login_keychain,
 					certificate
 				)
+				
+				if success
+					$stderr.puts "Installed certificate to #{login_keychain}"
+					
+					return true
+				else
+					raise "Failed to install certificate: #{certificate}"
+				end
 			end
 		end
 	end

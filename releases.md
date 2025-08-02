@@ -3,6 +3,7 @@
 ## Unreleased
 
   - Add support for `update-ca-trust` on Linux sytems.
+  - Better command output.
 
 ## v1.4.0
 
