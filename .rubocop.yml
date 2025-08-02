@@ -1,5 +1,11 @@
+plugins:
+  - rubocop-socketry
+
 AllCops:
   DisabledByDefault: true
+
+Layout/ConsistentBlankLineIndentation:
+  Enabled: true
 
 Layout/IndentationStyle:
   Enabled: true
@@ -44,6 +50,18 @@ Layout/EmptyLinesAroundClassBody:
 
 Layout/EmptyLinesAroundModuleBody:
   Enabled: true
+
+Layout/EmptyLineAfterMagicComment:
+   Enabled: true
+
+Layout/SpaceInsideBlockBraces:
+  Enabled: true
+  EnforcedStyle: no_space
+  SpaceBeforeBlockParameters: false
+
+Layout/SpaceAroundBlockParameters:
+  Enabled: true
+  EnforcedStyleInsidePipes: no_space
 
 Style/FrozenStringLiteralComment:
   Enabled: true

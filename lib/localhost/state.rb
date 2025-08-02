@@ -32,7 +32,7 @@ module Localhost
 		def self.purge(env = ENV)
 			path = self.path(env)
 			
-			FileUtils.rm_rf(path)
-		end	
+			return FileUtils.rm_rf(path)
+		end
 	end
 end
