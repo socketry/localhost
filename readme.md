@@ -22,6 +22,11 @@ Please see the [project documentation](https://socketry.github.io/localhost/) fo
 
 Please see the [project releases](https://socketry.github.io/localhost/releases/index) for all releases.
 
+### v1.6.0
+
+  - Add support for `update-ca-trust` on Linux sytems.
+  - Better command output.
+
 ### v1.4.0
 
   - Add `localhost:purge` to delete all certificates.
