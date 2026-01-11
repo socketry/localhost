@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2018-2025, by Samuel Williams.
+# Copyright, 2018-2026, by Samuel Williams.
 # Copyright, 2019, by Richard S. Leung.
 # Copyright, 2021, by Akshay Birajdar.
 # Copyright, 2021, by Ye Lin Aung.
@@ -173,7 +173,7 @@ module Localhost
 				context.session_id_context = "localhost"
 				
 				if context.respond_to? :tmp_dh_callback=
-					context.tmp_dh_callback = proc {self.dh_key}
+					context.tmp_dh_callback = proc{self.dh_key}
 				end
 				
 				if context.respond_to? :ecdh_curves=

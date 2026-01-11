@@ -44,10 +44,10 @@ The certificate and private key are stored in `$XDG_STATE_HOME/localhost.rb/` (t
 In general, you won't need to do anything at all. The application server you are using will automatically provision a self-signed certificate for localhost. That being said, if you want to implement your own self-signed secure server, the following example demonstrates how to use the {ruby Localhost::Authority}:
 
 ``` ruby
-require 'socket'
-require 'thread'
+require "socket"
+require "thread"
 
-require 'localhost/authority'
+require "localhost/authority"
 
 # Get the self-signed authority for localhost:
 authority = Localhost::Authority.fetch
