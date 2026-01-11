@@ -11,6 +11,9 @@ module Localhost
 			ANCHORS_PATH = "/etc/ca-certificates/trust-source/anchors/"
 			UPDATE_CA_TRUST = "update-ca-trust"
 			
+			# OpenSUSE/SLES use this path for certificate anchors.
+			OPENSUSE_ANCHORS_PATH = "/etc/pki/trust/anchors/"
+			
 			# This is an older method for systems that do not use `update-ca-trust`.
 			LOCAL_CERTIFICATES_PATH = "/usr/local/share/ca-certificates/"
 			UPDATE_CA_CERTIFICATES = "update-ca-certificates"
@@ -23,9 +26,13 @@ module Localhost
 				command = nil
 				
 				if File.exist?(ANCHORS_PATH)
-					# For systems using `update-ca-trust`.
+					# For systems using `update-ca-trust` (most Linux distributions).
 					destination = File.join(ANCHORS_PATH, filename)
 					command = UPDATE_CA_TRUST
+				elsif File.exist?(OPENSUSE_ANCHORS_PATH)
+					# For systems using `update-ca-certificates` (OpenSUSE/SLES).
+					destination = File.join(OPENSUSE_ANCHORS_PATH, filename)
+					command = UPDATE_CA_CERTIFICATES
 				elsif File.exist?(LOCAL_CERTIFICATES_PATH)
 					# For systems using `update-ca-certificates`.
 					destination = File.join(LOCAL_CERTIFICATES_PATH, filename)
