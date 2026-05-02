@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Add `bake` as direct dependency.
+
 ## v1.6.0
 
   - Add support for `update-ca-trust` on Linux sytems.
