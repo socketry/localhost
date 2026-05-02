@@ -1,0 +1,17 @@
+# Automatically generated context index for Utopia::Project guides.
+# Do not edit then files in this directory directly, instead edit the guides and then run `bake utopia:project:agent:context:update`.
+---
+description: Manage a local certificate authority for self-signed localhost development
+  servers.
+metadata:
+  documentation_uri: https://socketry.github.io/localhost/
+  source_code_uri: https://github.com/socketry/localhost.git
+files:
+- path: getting-started.md
+  title: Getting Started
+  description: This guide explains how to use `localhost` for provisioning local TLS
+    certificates for development.
+- path: example-server.md
+  title: Example Server
+  description: This guide demonstrates how to use <code class="language-ruby">Localhost::Authority</code>
+    to implement a simple HTTPS client & server.

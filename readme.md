@@ -22,6 +22,10 @@ Please see the [project documentation](https://socketry.github.io/localhost/) fo
 
 Please see the [project releases](https://socketry.github.io/localhost/releases/index) for all releases.
 
+### v1.8.0
+
+  - Add `bake` as direct dependency.
+
 ### v1.6.0
 
   - Add support for `update-ca-trust` on Linux sytems.

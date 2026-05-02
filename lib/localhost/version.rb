@@ -4,5 +4,5 @@
 # Copyright, 2018-2026, by Samuel Williams.
 
 module Localhost
-	VERSION = "1.7.0"
+	VERSION = "1.8.0"
 end

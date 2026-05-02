@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v1.8.0
 
   - Add `bake` as direct dependency.
 
